@@ -16,4 +16,13 @@ export const GetAuthUser = (user = null) => {
         }
     };
 };
+
+export const ClearAuthUser = () => {
+    return (dispatch) => {
+        dispatch({ type: authConstants.CLEAR_AUTH_REQUEST });
+        dispatch({
+            type: authConstants.CLEAR_AUTH_SUCCESS,
+            payload: {}
+        });
+    };
 };
