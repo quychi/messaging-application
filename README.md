@@ -1,5 +1,11 @@
 # Messaging Application
 
+React, Redux, ES6, Firebase, Chat Engine
+
+User can be registered using a Facebook or Google account.
+
+Demo: https://chatapplication-v1.netlify.app
+
 ## Introduction
 
 This is a Realtime Chat Application with Social Auth and dedicated chat APIs/sockets.
