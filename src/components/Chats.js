@@ -63,7 +63,7 @@ function Chats() {
                         .post('https://api.chatengine.io/users/', formdata, {
                             headers: {
                                 'private-key':
-                                    '8be4683c-7bc6-42b4-a3bd-b93b90aec394'
+                                    process.env.REACT_APP_CHAT_ENGINE_KEY
                             }
                         })
                         .then(() => setLoading(false))
