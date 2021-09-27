@@ -3,11 +3,10 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { ChatEngine } from 'react-chat-engine';
 
-import { auth } from '../firebase';
+import { auth } from '../services/firebase';
 import { ClearAuthUser } from '../actions';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import { UpSquareFilled } from '@ant-design/icons';
 
 function Chats() {
     const [loading, setLoading] = useState(false);

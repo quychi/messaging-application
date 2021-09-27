@@ -1,8 +1,8 @@
 import React from 'react';
 
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import Login from './components/Login';
-import Chats from './components/Chats';
+import Login from './pages/Login';
+import Chats from './pages/Chats';
 
 import { connect } from 'react-redux';
 
