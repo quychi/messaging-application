@@ -10,7 +10,7 @@
     "axios": "^0.21.1",
     "firebase": "^7.20.0",
     "react": "^16.13.1",
-    "react-chat-engine": "^1.8.10",
+    //"react-chat-engine": "^1.8.10", this is for Chats.js//
     "react-dom": "^16.13.1",
     "react-redux": "^7.2.5",
     "react-router-dom": "^5.2.0",
