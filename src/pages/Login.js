@@ -18,7 +18,7 @@ function Login() {
         auth.onAuthStateChanged((user) => {
             dispatch(GetAuthUser(user));
             if (JSON.stringify(userData) !== '{}') {
-                history.push('/chats');
+                history.push('/usersInfo');
             }
         });
     });

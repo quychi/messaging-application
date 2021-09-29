@@ -1,5 +1,7 @@
-import React from 'react';
-import { Col, Form, DatePicker, Select } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Col, Form, notification, DatePicker, Select } from 'antd';
+import moment from 'moment';
+
 // import { ReactComponent as UserSvg } from '../../../common/images/user.svg';
 // import { ReactComponent as PhoneSvg } from '../../../common/images/phone.svg';
 // import { ReactComponent as AddressSvg } from '../../../common/images/address.svg';
@@ -12,12 +14,42 @@ import ButtonComponent from '../../../common/components/Button';
 import InputComponent from '../../../common/components/WelcomeInput';
 import SelectComponent from '../../../common/components/WelcomeSelect';
 
+import { useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+import { auth, db } from '../../../services/firebase';
+
+import { getDatabase, ref, set } from 'firebase/database';
+
 const Register1 = () => {
+    const [sendForm] = Form.useForm();
+    const userData = useSelector(
+        ({ authReducer }) => authReducer.authUser.user
+    );
+    const history = useHistory();
+
+    const handleSubmit = () => {
+        sendForm.validateFields(['nickname', 'birthday', 'gender']).then(() => {
+            const dataForm = sendForm.getFieldsValue();
+            try {
+                const uid = auth.currentUser.uid; //userData.uid,
+                db.ref('users/' + uid).set({
+                    nickname: dataForm.nickname,
+                    birthday: moment(dataForm.birthday).format('DD/MM/YYYY'),
+                    gender: dataForm.gender,
+                    avatar: 'https://picsum.photos/200' //auto random from picsum.photo
+                });
+                history.push('/chats');
+            } catch (error) {
+                console.log('==================== writeError:', error.message);
+            }
+        });
+    };
+
     return (
         <div>
             <Col md={12} xs={24} align="start" justify="space-between">
                 <Form
-                    // form={sendForm}
+                    form={sendForm}
                     name="sendForm"
                     labelCol={{ span: 24 }}
                     wrapperCol={{ span: 24 }}
@@ -26,7 +58,7 @@ const Register1 = () => {
                     validateMessages={{ required: 'test' }}
                 >
                     <Form.Item
-                        name={`Nickname`}
+                        name={`nickname`}
                         initialValue=""
                         rules={[
                             {
@@ -43,7 +75,7 @@ const Register1 = () => {
                         />
                     </Form.Item>
                     <Form.Item
-                        name={`dob`}
+                        name={`birthday`}
                         initialValue=""
                         rules={[
                             {
@@ -58,9 +90,8 @@ const Register1 = () => {
                             placeholder="Select date of birth"
                         />
                     </Form.Item>
-
                     <Form.Item
-                        name="activity_area"
+                        name="gender"
                         rules={[
                             {
                                 required: true,
@@ -68,15 +99,7 @@ const Register1 = () => {
                             }
                         ]}
                     >
-                        <SelectComponent
-                            // onChange={(value) => {
-                            //   if (value === "point_of_sale")
-                            //     setIsShowPostTypeInput(true);
-                            //   else setIsShowPostTypeInput(false);
-                            //   sendForm.setFieldsValue({ cost_type: "free" });
-                            // }}
-                            placeholder={'Gender'}
-                        >
+                        <SelectComponent placeholder={'Gender'}>
                             <Select.Option value="Male">Male</Select.Option>
                             <Select.Option value="Female">Female</Select.Option>
                         </SelectComponent>
@@ -84,14 +107,7 @@ const Register1 = () => {
                 </Form>
 
                 <FooterButtonWrapper>
-                    <ButtonComponent
-                        onClick={() => {
-                            // setIsShowModalThanks(false);
-                            // setIsShowNearByPosts(false);
-                            // onCancel();
-                            // setPostImgs([]);
-                        }}
-                    >
+                    <ButtonComponent onClick={handleSubmit}>
                         Enter
                     </ButtonComponent>
                 </FooterButtonWrapper>
