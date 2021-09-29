@@ -36,9 +36,12 @@ const Register1 = () => {
                     nickname: dataForm.nickname,
                     birthday: moment(dataForm.birthday).format('DD/MM/YYYY'),
                     gender: dataForm.gender,
-                    avatar: 'https://picsum.photos/200' //auto random from picsum.photo
+                    avatar: 'https://picsum.photos/200', //auto random from picsum.photo
+                    status: 'online',
+                    uid: uid,
+                    inConversation: 0
                 });
-                history.push('/chats');
+                history.push('/conversationListItem');
             } catch (error) {
                 console.log('==================== writeError:', error.message);
             }
