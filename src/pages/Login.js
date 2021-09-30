@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
 import { GoogleOutlined, FacebookOutlined } from '@ant-design/icons';
-import 'firebase/app';
 
-import { auth } from '../firebase';
+import { auth } from '../services/firebase';
 import firebase from 'firebase/app';
 import { useDispatch, useSelector } from 'react-redux';
 import { GetAuthUser } from '../actions/index';
@@ -19,7 +18,7 @@ function Login() {
         auth.onAuthStateChanged((user) => {
             dispatch(GetAuthUser(user));
             if (JSON.stringify(userData) !== '{}') {
-                history.push('/chats');
+                history.push('/usersInfo');
             }
         });
     });
