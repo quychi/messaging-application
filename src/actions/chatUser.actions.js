@@ -1,14 +1,14 @@
 import { chatUserConstants } from '../constants/chatUser.constants';
 
-export const SaveChatUser = (fromUid = '', toUid = '') => {
+export const SaveChatUser = (member0Uid = '', member1Uid = '') => {
     return (dispatch) => {
         dispatch({ type: chatUserConstants.SAVE_CHATUSER_REQUEST });
-        if (fromUid !== '' && toUid !== '') {
+        if (member0Uid !== '' && member1Uid !== '') {
             dispatch({
                 type: chatUserConstants.SAVE_CHATUSER_SUCCESS,
                 payload: {
-                    fromUid: fromUid,
-                    toUid: toUid
+                    member0Uid: member0Uid,
+                    member1Uid: member1Uid
                 }
             });
         } else {
