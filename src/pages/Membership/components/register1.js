@@ -19,6 +19,7 @@ import { useHistory } from 'react-router-dom';
 import { auth, db } from '../../../services/firebase';
 
 import { getDatabase, ref, set } from 'firebase/database';
+import MD5 from 'crypto-js/md5';
 
 const Register1 = () => {
     const [sendForm] = Form.useForm();
@@ -26,6 +27,8 @@ const Register1 = () => {
         ({ authReducer }) => authReducer.authUser.user
     );
     const history = useHistory();
+    const address = String(auth.currentUser.email).trim().toLowerCase();
+    const hash = MD5(address).toString();
 
     const handleSubmit = () => {
         sendForm.validateFields(['nickname', 'birthday', 'gender']).then(() => {
@@ -36,7 +39,7 @@ const Register1 = () => {
                     nickname: dataForm.nickname,
                     birthday: moment(dataForm.birthday).format('DD/MM/YYYY'),
                     gender: dataForm.gender,
-                    avatar: 'https://picsum.photos/200', //auto random from picsum.photo
+                    avatar: `https://www.gravatar.com/avatar/${hash}`, //randomly generated
                     status: 'online',
                     uid: uid,
                     inConversation: 0
