@@ -1,11 +1,13 @@
 import React, { useEffect } from 'react';
 import { GoogleOutlined, FacebookOutlined } from '@ant-design/icons';
 
-import { auth } from '../services/firebase';
+import { auth, db } from '../services/firebase';
 import firebase from 'firebase/app';
 import { useDispatch, useSelector } from 'react-redux';
 import { GetAuthUser } from '../actions/index';
 import { useHistory } from 'react-router-dom';
+import { updateUserStatus } from '../helpers/updateStatusUser';
+import { STATUS } from '../constants/const';
 
 function Login() {
     const dispatch = useDispatch();
@@ -16,9 +18,18 @@ function Login() {
 
     useEffect(() => {
         auth.onAuthStateChanged((user) => {
-            dispatch(GetAuthUser(user));
-            if (JSON.stringify(userData) !== '{}') {
-                history.push('/usersInfo');
+            //authStateChanged <=> (login || logout). Logout -> user is null
+            if (user) {
+                dispatch(GetAuthUser(user));
+                db.ref()
+                    .child('users/' + user.uid)
+                    .once('value', function (snapshot) {
+                        if (snapshot.exists()) {
+                            //exists users info (nikcname, dob, gender)
+                            updateUserStatus(user.uid, STATUS.AVAILABLE);
+                            history.push('/conversationListItem');
+                        } else history.push('/usersInfo');
+                    });
             }
         });
     });
