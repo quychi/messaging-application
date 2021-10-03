@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -6,8 +6,18 @@ import { ClearAuthUser } from '../actions';
 import { auth } from '../services/firebase';
 import { db } from '../services/firebase';
 import { v1 as uuid } from 'uuid';
+import { parseEmojis } from '../helpers/parseEmojis';
+import Linkify from 'react-linkify';
+import { Col, Form, Row } from 'antd';
+import { FooterButtonWrapper } from './Membership/styled';
+import ButtonComponent from '../common/components/Button';
+import InputComponent from '../common/components/WelcomeInput';
+import ContentEditable from 'react-contenteditable';
+import sanitizeHtml from 'sanitize-html';
+import linkifyHtml from 'linkify-html';
 
 export default function Chat2() {
+    const [sendForm] = Form.useForm();
     const userData = useSelector(
         ({ authReducer }) => authReducer.authUser.user
     );
@@ -47,48 +57,70 @@ export default function Chat2() {
         }
     }, [state.chats.length]);
 
-    const handleChange = (event) => {
-        event.persist();
+    const linkify = (text = '') => {
+        var urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
+        //var urlRegex = /(https?:\/\/[^\s]+)/g;
+        return text.replace(urlRegex, function (url, b, c) {
+            var url2 = c == 'www.' ? 'http://' + url : url;
+            return '<a href="' + url2 + '" target="_blank">' + url + '</a>';
+        });
+    };
+    const handleChange = (evt) => {
+        let value = evt.target.value.replace(
+            /<a href=".*?">(.*?)<\/a>/g,
+            (match, p1) => p1
+        );
+        const parseEmojisOfMessage = parseEmojis(value || '');
+        const html = linkifyHtml(parseEmojisOfMessage);
+        sendForm.setFieldsValue({
+            content: html
+        });
 
-        setState({ ...state, content: event.target.value });
+        setState({
+            ...state,
+            content: html
+        });
+    };
+
+    const sanitizeConf = {
+        allowedTags: ['b', 'i', 'em', 'strong', 'a', 'p', 'h1'],
+        allowedAttributes: { a: ['href'] }
+    };
+
+    const sanitize = () => {
+        setState({
+            ...state,
+            content: sanitizeHtml(state.content, sanitizeConf)
+        });
     };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         setState({ ...state, writeError: null });
+        let removeHtmlTag = state.content.replace(
+            /<a href=".*?">(.*?)<\/a>/g,
+            (match, p1) => p1
+        );
         try {
             await db.ref('chats/' + roomName + '/' + uuid()).set({
                 sentBy: auth.currentUser.uid,
-                message: state.content,
+                message: removeHtmlTag,
                 timestamp: Date.now()
             });
+            setState({ ...state, content: '' });
         } catch (error) {
             console.log(
                 '============  write chats/message error =============',
                 error.message
             );
+            setState({ ...state, writeError: error.message });
         }
-    };
-
-    const updateStatus = (userUid = null) => {
-        if (userUid) {
-            try {
-                db.ref('users/' + userUid).set({
-                    status: 'offline'
-                });
-            } catch (error) {
-                console.log(
-                    '============  write data error =============',
-                    error.message
-                );
-            }
-        } else console.log('============ userUid is null =============');
     };
 
     async function handleLogout() {
         await auth.signOut();
         await dispatch(ClearAuthUser());
-        updateStatus(auth.currentUser.uid);
+        // updateStatus(auth.currentUser.uid);
         history.push('/');
     }
 
@@ -108,15 +140,45 @@ export default function Chat2() {
                         return x.timestamp - y.timestamp;
                     })
                     .map((chat) => {
-                        return <p key={chat.timestamp}>{chat.message}</p>;
+                        return (
+                            <Linkify>
+                                <p key={chat.timestamp}>
+                                    {parseEmojis(chat.message)}
+                                </p>
+                            </Linkify>
+                        );
                     })}
             </div>
             {/* {# message form #} */}
-            <form onSubmit={handleSubmit}>
-                <input onChange={handleChange}></input>
-                {state.error ? <p>{state.writeError}</p> : null}
-                <button type="submit">Send</button>
-            </form>
+
+            <Col xs={24} md={24}>
+                <Row align="start" justify="start" wrap={false}>
+                    <Row
+                        justify="space-between"
+                        align="middle"
+                        wrap={false}
+                        style={{
+                            width: '100%',
+                            marginTop: 15
+                        }}
+                    >
+                        <ContentEditable
+                            className="editable"
+                            tagName="pre"
+                            html={state.content} // innerHTML of the editable div
+                            disabled={false} // use true to disable edition
+                            onChange={handleChange} // handle innerHTML change
+                            onBlur={sanitize}
+                        />
+                        <ButtonComponent
+                            className="buttonSend"
+                            onClick={handleSubmit}
+                        >
+                            Send
+                        </ButtonComponent>
+                    </Row>
+                </Row>
+            </Col>
             <div>
                 Login in as: <strong>{state.user.email}</strong>
             </div>
