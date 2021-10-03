@@ -2,8 +2,8 @@ import { chatUserConstants } from '../constants/chatUser.constants';
 
 const initialState = {
     chatUser: {
-        fromUid: '',
-        toUid: '',
+        member0Uid: '',
+        member1Uid: '',
         isSave: false
     }
 };
@@ -23,8 +23,8 @@ const chatUserReducer = (state = initialState, action) => {
                 ...state,
                 chatUser: {
                     ...state.chatUser,
-                    fromUid: action.payload.fromUid,
-                    toUid: action.payload.toUid,
+                    member0Uid: action.payload.member0Uid,
+                    member1Uid: action.payload.member1Uid,
                     isSave: false
                 }
             };
