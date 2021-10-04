@@ -20,6 +20,7 @@ import { auth, db } from '../../../services/firebase';
 
 import { getDatabase, ref, set } from 'firebase/database';
 import MD5 from 'crypto-js/md5';
+import { GENDER, STATUS } from '../../../constants/const';
 
 const Register1 = () => {
     const [sendForm] = Form.useForm();
@@ -40,9 +41,8 @@ const Register1 = () => {
                     birthday: moment(dataForm.birthday).format('DD/MM/YYYY'),
                     gender: dataForm.gender,
                     avatar: `https://www.gravatar.com/avatar/${hash}`, //randomly generated
-                    status: 'online',
-                    uid: uid,
-                    inConversation: 0
+                    status: STATUS.AVAILABLE,
+                    uid: uid
                 });
                 history.push('/conversationListItem');
             } catch (error) {
@@ -106,8 +106,12 @@ const Register1 = () => {
                         ]}
                     >
                         <SelectComponent placeholder={'Gender'}>
-                            <Select.Option value="Male">Male</Select.Option>
-                            <Select.Option value="Female">Female</Select.Option>
+                            <Select.Option value={GENDER.MALE}>
+                                Male
+                            </Select.Option>
+                            <Select.Option value={GENDER.FEMALE}>
+                                Female
+                            </Select.Option>
                         </SelectComponent>
                     </Form.Item>
                 </Form>

@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Login from './pages/Login';
 // import Chats from './pages/Chats';
 import Chat2 from './pages/Chat2';
-import UsersInfo from './pages/Membership';
+import UserInfo from './pages/Membership';
 import ConversationListItem from './common/components/ConversationListItem';
 
 import 'antd/dist/antd.css';
@@ -17,7 +17,7 @@ function App() {
             <Router>
                 <Switch>
                     <Route exact path="/" component={Login} />
-                    <Route path="/usersInfo" component={UsersInfo} />
+                    <Route path="/usersInfo" component={UserInfo} />
                     <Route
                         path="/conversationListItem"
                         component={ConversationListItem}

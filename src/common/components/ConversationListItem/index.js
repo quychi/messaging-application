@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { SaveChatUser } from '../../../actions/chatUser.actions';
+import { STATUS } from '../../../constants/const';
+import { updateUserStatus } from '../../../helpers/updateStatusUser';
 import { auth, db } from '../../../services/firebase';
 import './ConversationListItem.css';
 
@@ -18,13 +20,13 @@ export default function ConversationListItem(props) {
             await db.ref('users').on('value', (snapshot) => {
                 let onlineUsersArray = [];
                 snapshot.forEach((snap) => {
-                    if (snap.val().status === 'online') {
+                    if (snap.val().status !== STATUS.OFFLINE) {
                         onlineUsersArray.push(snap.val());
                     }
                 });
                 setOnlineUsers(onlineUsersArray);
                 const availableUsersArray = onlineUsersArray.filter(
-                    (obj) => obj.inConversation === 0
+                    (obj) => obj.status === STATUS.AVAILABLE
                 );
                 setAvailableUsers(availableUsersArray);
             });
@@ -65,12 +67,12 @@ export default function ConversationListItem(props) {
         }
     };
 
-    const handleClick = (id) => {
-        const toUser = availableUsers.filter(function (obj) {
-            return obj.uid === id;
-        });
-        dispatch(SaveChatUser(auth.currentUser.uid, toUser[0].uid)); //userData.uid
-        createRoom(auth.currentUser.uid, toUser[0].uid);
+    const handleClick = (itemUid) => {
+        const toUserUid = itemUid;
+        dispatch(SaveChatUser(auth.currentUser.uid, toUserUid)); //userData.uid
+        createRoom(auth.currentUser.uid, toUserUid);
+        updateUserStatus(auth.currentUser.uid, STATUS.UNAVAILABLE);
+        updateUserStatus(toUserUid, STATUS.UNAVAILABLE);
         history.push('/chats');
     };
 
@@ -94,14 +96,13 @@ export default function ConversationListItem(props) {
                                 {item.nickname}
                             </h1>
                             <p className="conversation-snippet">
-                                {item.status}
-                                {','}&nbsp;available
+                                online{','}&nbsp;available
                             </p>
                         </div>
                     </div>
                 ))}
 
-            <h3 style={{ color: '#0055A9' }}>Online Users</h3>
+            <h3 style={{ color: '#0055A9' }}>Unavailable Users</h3>
             {onlineUsers &&
                 onlineUsers.map((item, i) => (
                     <div className="conversation-list-item" key={i}>
@@ -115,7 +116,7 @@ export default function ConversationListItem(props) {
                                 {item.nickname}
                             </h1>
                             <p className="conversation-snippet">
-                                {item.status}
+                                online{','}&nbsp;unavailable
                             </p>
                         </div>
                     </div>
