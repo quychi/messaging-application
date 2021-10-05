@@ -5,10 +5,9 @@ import {
     // Checkbox,
 } from 'antd';
 
-// import SuspenseLoading from 'common/components/SuspenseLoading';
-
 import Register1 from './components/register1';
 
+import Loading from '../../common/components/Loading';
 const ModalComponent = lazy(() => import('../../common/components/Modal'));
 
 const UserInfo = ({ onCancel, height }) => {
@@ -57,7 +56,7 @@ const UserInfo = ({ onCancel, height }) => {
 
     return (
         <div>
-            <Suspense fallback={<div>Loading... </div>}>
+            <Suspense fallback={<Loading />}>
                 <ModalMembership />
             </Suspense>
         </div>

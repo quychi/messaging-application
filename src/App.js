@@ -1,10 +1,8 @@
-import React from 'react';
 import React, { Suspense, lazy, useState, useEffect } from 'react';
 
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Login from './pages/Login';
 // import Chats from './pages/Chats';
-import Chat2 from './pages/Chat2';
 import UserInfo from './pages/Membership';
 import ConversationListItem from './common/components/ConversationListItem';
 import { auth } from './services/firebase';
@@ -14,8 +12,10 @@ import 'antd/dist/antd.css';
 import { connect } from 'react-redux';
 
 import PrivateRoute from './common/components/PrivateRoute';
+import Loading from './common/components/Loading';
+const Chat2 = lazy(() => import('./pages/Chat2'));
+
 function App() {
-    return (
     const [state, setState] = useState({
         authenticated: false,
         loading: true
@@ -36,8 +36,13 @@ function App() {
             }
         });
     }, []);
+
+    return state.loading === true ? (
+        <Loading />
+    ) : (
         <div style={{ fontFamily: 'Avenir' }}>
             <Router>
+                <Suspense fallback={<Loading />}>
                     <Switch>
                         {/* <PublicRoute path="/signup" authenticated={state.authenticated} component={Signup}></PublicRoute> */}
                         <Route exact path="/" component={Login} />
@@ -57,6 +62,7 @@ function App() {
                             component={Chat2}
                         ></PrivateRoute>
                     </Switch>
+                </Suspense>
             </Router>
         </div>
     );

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { lazy, useRef, useState } from 'react';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -7,7 +7,6 @@ import { auth } from '../services/firebase';
 import { db } from '../services/firebase';
 import { v1 as uuid } from 'uuid';
 import { STATUS } from '../constants/const';
-import ModalComponent from '../common/components/Modal';
 import { Col, Form, Row } from 'antd';
 import { Suspense } from 'react';
 import ButtonComponent from '../common/components/Button';
@@ -19,6 +18,8 @@ import sanitizeHtml from 'sanitize-html';
 import linkifyHtml from 'linkify-html';
 import { parseEmojis } from '../helpers/parseEmojis';
 import Linkify from 'react-linkify';
+import Loading from '../common/components/Loading';
+const ModalComponent = lazy(() => import('../common/components/Modal'));
 
 const Heading = styled.h1`
     paddingLeft: '5px',
@@ -218,7 +219,7 @@ export default function Chat2() {
 
     return (
         <div className="chats-page">
-            <Suspense fallback={<div>Loading... </div>}>
+            <Suspense fallback={<Loading />}>
                 <ModalLogout />
 
                 <div className="nav-bar">
