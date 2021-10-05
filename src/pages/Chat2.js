@@ -48,7 +48,16 @@ export default function Chat2() {
     });
     const [logoutModal, setLogoutModal] = useState(false);
 
+    // Setup the `beforeunload` event listener
+    const setupBeforeUnloadListener = () => {
+        window.addEventListener('beforeunload', (ev) => {
+            ev.preventDefault();
+            return handleLogout();
+        });
+    };
+
     useEffect(() => {
+        //Case 1: user2 logout
         try {
             db.ref('users/' + memberData.member1Uid).on('value', (snapshot) => {
                 snapshot.forEach((snap) => {
@@ -60,6 +69,8 @@ export default function Chat2() {
         } catch (error) {
             console.log('========== errr:', error.message);
         }
+        //Case 2: user2 close browser tab
+        setupBeforeUnloadListener();
     }, []);
 
     useEffect(() => {
