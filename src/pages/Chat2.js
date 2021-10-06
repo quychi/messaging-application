@@ -20,6 +20,7 @@ import { parseEmojis } from '../helpers/parseEmojis';
 import Linkify from 'react-linkify';
 import Loading from '../common/components/Loading';
 const ModalComponent = lazy(() => import('../common/components/Modal'));
+const Language = lazy(() => import('../common/components/Language'));
 
 const Heading = styled.h1`
     paddingLeft: '5px',
@@ -28,6 +29,11 @@ const Heading = styled.h1`
     fontWeight: '500',
     fontSize: '20px',
     lineHeight: '153.9%'
+`;
+
+export const LanguageBoxContainer = styled.div`
+    width: 100%;
+    margin-top: 10px;
 `;
 
 export default function Chat2() {
@@ -223,13 +229,18 @@ export default function Chat2() {
                 <ModalLogout />
 
                 <div className="nav-bar">
-                    <div className="logo-tab">Messaging Application</div>
-
-                    <div onClick={handleLogout} className="logout-tab">
-                        Logout
-                    </div>
+                    {/* <LanguageBoxContainer> */}
+                    <Row align="space-between" justify="middle">
+                        <div className="logo-tab">Messaging Application</div>
+                        <div style={{ display: 'flex', gap: 30 }}>
+                            <div onClick={handleLogout} className="logout-tab">
+                                Logout
+                            </div>
+                            <Language size={24} />
+                        </div>
+                    </Row>
+                    {/* </LanguageBoxContainer> */}
                 </div>
-
                 <div className="chats">
                     {state.chats
                         .sort(function (x, y) {

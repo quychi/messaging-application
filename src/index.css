@@ -79,7 +79,7 @@
 }
 
 .logo-tab {
-    position: absolute;
+    /* position: absolute; */
     left: 22px;
     top: 12px;
     font-size: 32px;
@@ -88,7 +88,7 @@
 }
 
 .logout-tab {
-    position: absolute;
+    /* position: absolute; */
     top: 22px;
     right: 22px;
     color: white;
