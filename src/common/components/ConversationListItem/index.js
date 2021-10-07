@@ -1,3 +1,4 @@
+import { Col } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -5,7 +6,8 @@ import { SaveChatUser } from '../../../actions/chatUser.actions';
 import { STATUS } from '../../../constants/const';
 import { updateUserStatus } from '../../../helpers/updateStatusUser';
 import { auth, db } from '../../../services/firebase';
-import './ConversationListItem.css';
+import styles from './ConversationListItem.module.css';
+import cx from 'classnames';
 
 export default function ConversationListItem(props) {
     // const { nickname, photo, status } = props.data;
@@ -77,26 +79,26 @@ export default function ConversationListItem(props) {
     };
 
     return (
-        <>
+        <Col xs={24} md={24}>
             <h3 style={{ color: '#0055A9' }}>Available Users</h3>
             {availableUsers &&
                 availableUsers.map((item, i) => (
                     <div
-                        className="conversation-list-item"
+                        className={styles.conversationListItem}
                         key={i}
                         onClick={() => handleClick(item.uid)}
                     >
                         <img
-                            className="conversation-photo"
+                            className={styles.conversationPhoto}
                             src={item.avatar}
                             alt="conversation"
                         />
-                        <div className="conversation-info">
-                            <h1 className="conversation-title">
-                                {item.nickname}
+                        <div className={styles.conversationInfo}>
+                            <h1 className={styles.conversationTitle}>
+                                {item.nickName}
                             </h1>
-                            <p className="conversation-snippet">
-                                online{','}&nbsp;available
+                            <p className={styles.conversationSnippet}>
+                                online{','}&nbsp;not in any conversation
                             </p>
                         </div>
                     </div>
@@ -105,22 +107,28 @@ export default function ConversationListItem(props) {
             <h3 style={{ color: '#0055A9' }}>Unavailable Users</h3>
             {onlineUsers &&
                 onlineUsers.map((item, i) => (
-                    <div className="conversation-list-item" key={i}>
+                    <div
+                        className={cx(
+                            styles.conversationListItem,
+                            styles.unavailableUser
+                        )}
+                        key={i}
+                    >
                         <img
-                            className="conversation-photo"
+                            className={styles.conversationPhoto}
                             src={item.avatar}
                             alt="conversation"
                         />
-                        <div className="conversation-info">
-                            <h1 className="conversation-title">
-                                {item.nickname}
+                        <div className={styles.conversationInfo}>
+                            <h1 className={styles.conversationTitle}>
+                                {item.nickName}
                             </h1>
-                            <p className="conversation-snippet">
-                                online{','}&nbsp;unavailable
+                            <p className={styles.conversationSnippet}>
+                                online{','}&nbsp;in conversation
                             </p>
                         </div>
                     </div>
                 ))}
-        </>
+        </Col>
     );
 }

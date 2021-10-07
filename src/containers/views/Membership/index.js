@@ -5,10 +5,10 @@ import {
     // Checkbox,
 } from 'antd';
 
-import Register1 from './components/register1';
+import Register from './components/register';
 
-import Loading from '../../common/components/Loading';
-const ModalComponent = lazy(() => import('../../common/components/Modal'));
+import Loading from '../../../common/components/Loading';
+const ModalComponent = lazy(() => import('../../../common/components/Modal'));
 
 const UserInfo = ({ onCancel, height }) => {
     const ModalMembership = () => {
@@ -47,7 +47,7 @@ const UserInfo = ({ onCancel, height }) => {
                         </span>
                     </Col>
                     <Col xs={16} align="center" justify="space-between">
-                        <Register1 />
+                        <Register />
                     </Col>
                 </Col>
             </ModalComponent>
