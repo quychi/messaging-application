@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
 import { GoogleOutlined, FacebookOutlined } from '@ant-design/icons';
 
-import { auth, db } from '../services/firebase';
+import { auth, db } from '../../services/firebase';
 import firebase from 'firebase/app';
 import { useDispatch, useSelector } from 'react-redux';
-import { GetAuthUser } from '../actions/index';
+import { GetAuthUser } from '../../actions/index';
 import { useHistory } from 'react-router-dom';
-import { updateUserStatus } from '../helpers/updateStatusUser';
-import { STATUS } from '../constants/const';
+import { updateUserStatus } from '../../helpers/updateStatusUser';
+import { STATUS } from '../../constants/const';
 
 function Login() {
     const dispatch = useDispatch();
@@ -19,8 +19,8 @@ function Login() {
     useEffect(() => {
         auth.onAuthStateChanged((user) => {
             //authStateChanged <=> (login || logout). Logout -> user is null
+            dispatch(GetAuthUser(user));
             if (user) {
-                dispatch(GetAuthUser(user));
                 db.ref()
                     .child('users/' + user.uid)
                     .once('value', function (snapshot) {

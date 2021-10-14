@@ -10,19 +10,19 @@ import moment from 'moment';
 // import { ReactComponent as EyeOpenSvg } from '../../../common/images/eyeOpen.svg';
 // import { ReactComponent as EyeCloseSvg } from '../../../common/images/eyeClose.svg';
 import { FooterButtonWrapper } from '../styled';
-import ButtonComponent from '../../../common/components/Button';
-import InputComponent from '../../../common/components/WelcomeInput';
-import SelectComponent from '../../../common/components/WelcomeSelect';
+import ButtonComponent from '../../../../common/components/Button';
+import InputComponent from '../../../../common/components/WelcomeInput';
+import SelectComponent from '../../../../common/components/WelcomeSelect';
 
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { auth, db } from '../../../services/firebase';
+import { auth, db } from '../../../../services/firebase';
 
 import { getDatabase, ref, set } from 'firebase/database';
 import MD5 from 'crypto-js/md5';
-import { GENDER, STATUS } from '../../../constants/const';
+import { GENDER, STATUS } from '../../../../constants/const';
 
-const Register1 = () => {
+const Register = () => {
     const [sendForm] = Form.useForm();
     const userData = useSelector(
         ({ authReducer }) => authReducer.authUser.user
@@ -32,12 +32,12 @@ const Register1 = () => {
     const hash = MD5(address).toString();
 
     const handleSubmit = () => {
-        sendForm.validateFields(['nickname', 'birthday', 'gender']).then(() => {
+        sendForm.validateFields(['nickName', 'birthday', 'gender']).then(() => {
             const dataForm = sendForm.getFieldsValue();
             try {
                 const uid = auth.currentUser.uid; //userData.uid,
                 db.ref('users/' + uid).set({
-                    nickname: dataForm.nickname,
+                    nickName: dataForm.nickName,
                     birthday: moment(dataForm.birthday).format('DD/MM/YYYY'),
                     gender: dataForm.gender,
                     avatar: `https://www.gravatar.com/avatar/${hash}`, //randomly generated
@@ -64,7 +64,7 @@ const Register1 = () => {
                     validateMessages={{ required: 'test' }}
                 >
                     <Form.Item
-                        name={`nickname`}
+                        name={`nickName`}
                         initialValue=""
                         rules={[
                             {
@@ -125,4 +125,4 @@ const Register1 = () => {
         </div>
     );
 };
-export default Register1;
+export default Register;

@@ -31,3 +31,22 @@ export const ContentBackgroundWrapper = styled.div`
         padding-top: 0px;
     }
 `;
+
+export const EmojisBackgroundContainer = styled.div`
+    position: absolute;
+    top: 30px;
+    left: 0px;
+    width: 100%;
+    z-index: 0;
+`;
+
+export const EmojisBackgroundWrapper = styled.div`
+    position: absolute;
+    top: -30px;
+    left: -30px;
+    width: 100%;
+    height: 100%;
+    @media (max-width: 26.5625em) {
+        padding: 20px;
+    }
+`;

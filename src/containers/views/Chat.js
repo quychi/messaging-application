@@ -1,24 +1,27 @@
-import React, { useRef, useState } from 'react';
+import React, { lazy, useRef, useState } from 'react';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { ClearAuthUser } from '../actions';
-import { auth } from '../services/firebase';
-import { db } from '../services/firebase';
+import { ClearAuthUser } from '../../actions';
+import { auth } from '../../services/firebase';
+import { db } from '../../services/firebase';
 import { v1 as uuid } from 'uuid';
-import { STATUS } from '../constants/const';
-import ModalComponent from '../common/components/Modal';
+import { STATUS } from '../../constants/const';
 import { Col, Form, Row } from 'antd';
 import { Suspense } from 'react';
-import ButtonComponent from '../common/components/Button';
+import ButtonComponent from '../../common/components/Button';
 import { FooterButtonWrapper } from './Membership/styled';
 import styled from 'styled-components';
-import { updateUserStatus } from '../helpers/updateStatusUser';
+import { updateUserStatus } from '../../helpers/updateStatusUser';
 import ContentEditable from 'react-contenteditable';
 import sanitizeHtml from 'sanitize-html';
 import linkifyHtml from 'linkify-html';
-import { parseEmojis } from '../helpers/parseEmojis';
-import Linkify from 'react-linkify';
+import { parseEmojis } from '../../helpers/parseEmojis';
+import Loading from '../../common/components/Loading';
+import Message from '../../common/components/Message';
+import moment from 'moment';
+
+const ModalComponent = lazy(() => import('../../common/components/Modal'));
 
 const Heading = styled.h1`
     paddingLeft: '5px',
@@ -29,7 +32,7 @@ const Heading = styled.h1`
     lineHeight: '153.9%'
 `;
 
-export default function Chat2() {
+export default function Chat() {
     const [sendForm] = Form.useForm();
     const userData = useSelector(
         ({ authReducer }) => authReducer.authUser.user
@@ -43,6 +46,8 @@ export default function Chat2() {
         memberData.member0Uid < memberData.member1Uid
             ? memberData.member0Uid + '_' + memberData.member1Uid
             : memberData.member1Uid + '_' + memberData.member0Uid;
+
+    const MY_USER_ID = auth.currentUser.uid; //userData.uid;
 
     const [state, setState] = useState({
         user: auth.currentUser,
@@ -96,14 +101,6 @@ export default function Chat2() {
         }
     }, [state.chats.length]);
 
-    const linkify = (text = '') => {
-        var urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
-        //var urlRegex = /(https?:\/\/[^\s]+)/g;
-        return text.replace(urlRegex, function (url, b, c) {
-            var url2 = c == 'www.' ? 'http://' + url : url;
-            return '<a href="' + url2 + '" target="_blank">' + url + '</a>';
-        });
-    };
     const handleChange = (evt) => {
         let value = evt.target.value.replace(
             /<a href=".*?">(.*?)<\/a>/g,
@@ -111,9 +108,6 @@ export default function Chat2() {
         );
         const parseEmojisOfMessage = parseEmojis(value || '');
         const html = linkifyHtml(parseEmojisOfMessage);
-        sendForm.setFieldsValue({
-            content: html
-        });
 
         setState({
             ...state,
@@ -216,33 +210,78 @@ export default function Chat2() {
         );
     };
 
+    const renderMessages = (
+        previousMessages,
+        currentMessages,
+        nextMessages,
+        index
+    ) => {
+        let isMine = currentMessages.sentBy === MY_USER_ID;
+        let currentMoment = moment(currentMessages.timestamp);
+        let prevBySameAuthor = false;
+        let nextBySameAuthor = false;
+        let startsSequence = true;
+        let endsSequence = true;
+        let showTimestamp = true;
+
+        if (previousMessages) {
+            let previousMoment = moment(previousMessages.timestamp);
+            let previousDuration = moment.duration(
+                currentMoment.diff(previousMoment)
+            );
+            prevBySameAuthor =
+                previousMessages.sentBy === currentMessages.sentBy;
+
+            if (prevBySameAuthor && previousDuration.as('hours') < 1) {
+                startsSequence = false;
+            }
+
+            if (previousDuration.as('hours') < 1) {
+                showTimestamp = false;
+            }
+        }
+
+        if (nextMessages) {
+            let nextMoment = moment(nextMessages.timestamp);
+            let nextDuration = moment.duration(nextMoment.diff(currentMoment));
+            nextBySameAuthor = nextMessages.sentBy === currentMessages.sentBy;
+
+            if (nextBySameAuthor && nextDuration.as('hours') < 1) {
+                endsSequence = false;
+            }
+        }
+
+        return (
+            <Message
+                key={index}
+                isMine={isMine}
+                startsSequence={startsSequence}
+                endsSequence={endsSequence}
+                showTimestamp={showTimestamp}
+                data={currentMessages}
+            />
+        );
+    };
+
     return (
         <div className="chats-page">
-            <Suspense fallback={<div>Loading... </div>}>
+            <Suspense fallback={<Loading />}>
                 <ModalLogout />
 
-                <div className="nav-bar">
-                    <div className="logo-tab">Messaging Application</div>
-
-                    <div onClick={handleLogout} className="logout-tab">
-                        Logout
-                    </div>
-                </div>
-
                 <div className="chats">
-                    {state.chats
-                        .sort(function (x, y) {
-                            return x.timestamp - y.timestamp;
-                        })
-                        .map((chat) => {
-                            return (
-                                <Linkify>
-                                    <p key={chat.timestamp}>
-                                        {parseEmojis(chat.message)}
-                                    </p>
-                                </Linkify>
-                            );
-                        })}
+                    {state.chats &&
+                        state.chats
+                            .sort((x, y) => {
+                                return x.timestamp - y.timestamp;
+                            })
+                            .map((chat, index) => {
+                                return renderMessages(
+                                    state.chats[index - 1],
+                                    chat,
+                                    state.chats[index + 1],
+                                    index
+                                );
+                            })}
                 </div>
                 {/* {# message form #} */}
 
@@ -254,7 +293,7 @@ export default function Chat2() {
                             wrap={false}
                             style={{
                                 width: '100%',
-                                marginTop: 15
+                                marginTop: 30
                             }}
                         >
                             <ContentEditable
@@ -263,7 +302,7 @@ export default function Chat2() {
                                 html={state.content} // innerHTML of the editable div
                                 disabled={false} // use true to disable edition
                                 onChange={handleChange} // handle innerHTML change
-                                onBlur={sanitize}
+                                // onBlur={sanitize} //??? with this will remove text after link?
                             />
                             <ButtonComponent
                                 className="buttonSend"
@@ -275,7 +314,7 @@ export default function Chat2() {
                     </Row>
                 </Col>
                 <div>
-                    Login in as: <strong>{state.user.email}</strong>
+                    Login in as: <strong>{state?.user?.email}</strong>
                 </div>
             </Suspense>
         </div>
