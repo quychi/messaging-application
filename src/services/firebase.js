@@ -16,3 +16,6 @@ firebase.initializeApp({
 export const auth = firebase.auth();
 
 export const db = firebase.database();
+
+export const urlChats =
+    'https://messaging-application-cbe90-default-rtdb.firebaseio.com/chats/';
