@@ -17,7 +17,7 @@ const wait = (time) =>
 const loadMessage = async (roomName, callNumber) => {
     await wait(500);
     const { pageCount, keys } = await firebaseShallowKeys(roomName);
-    if (callNumber === Math.ceil(pageCount))
+    if (callNumber > Math.ceil(pageCount))
         return { isMore: false, messages: [] };
 
     const loadedMessages = await getMessagePage(
@@ -53,22 +53,20 @@ export const Container = ({ roomName }) => {
     useEffect(() => {
         const fetchData = async () => {
             await loadMoreData();
-            // await listenNewMessage(roomName);
+            await listenNewMessage(roomName);
         };
         fetchData();
     }, []);
 
     const listenNewMessage = async (roomName) => {
-        const { keys } = await firebaseShallowKeys(roomName);
-        const lastIdInSnapshot = keys[keys.lenght - 1];
+        let now = new Date().getTime();
         try {
             db.ref('chats')
                 .child(roomName)
-                .startAt(null, db.ref.push().key)
-                .on('child-added,...', (newMessage) => {
-                    if (newMessage.key() !== lastIdInSnapshot) {
-                        setListMessages((prev) => [newMessage.val(), ...prev]);
-                    }
+                .orderByChild('created')
+                .startAt(now)
+                .on('child_added', (snap) => {
+                    setListMessages((prev) => [...prev, snap.val()]);
                 });
         } catch (error) {
             console.log('============= read error', error.message);

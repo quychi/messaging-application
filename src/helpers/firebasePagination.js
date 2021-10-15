@@ -37,7 +37,12 @@ export const firebaseShallowKeys = async (roomName) => {
 };
 
 export const getMessagePage = async (callNumber, roomName, keys, pageCount) => {
-    let indexOfPage = Math.floor(pageCount - 1 - (callNumber - 1)); //get the page from newest to oldest (need lastest message)
+    let indexOfPage;
+    if (pageCount % Math.floor(pageCount) === 0) {
+        indexOfPage = Math.floor(pageCount - 1 - (callNumber - 1));
+    } else {
+        indexOfPage = Math.floor(pageCount - (callNumber - 1)); //get the page from newest to oldest (need lastest message)
+    }
     let key = keys[indexOfPage * pageLength];
     query = db //Firebse query return a promise
         .ref()

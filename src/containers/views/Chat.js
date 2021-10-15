@@ -19,6 +19,7 @@ import linkifyHtml from 'linkify-html';
 import { parseEmojis } from '../../helpers/parseEmojis';
 import Loading from '../../common/components/Loading';
 import { Container } from '../../common/components/MessageList/Container';
+import firebase from 'firebase';
 
 const ModalComponent = lazy(() => import('../../common/components/Modal'));
 
@@ -131,7 +132,8 @@ export default function Chat() {
                 .push() //Firebase's .push() function will generate keys based on timestamp
                 .set({
                     sentBy: auth.currentUser.uid,
-                    message: removeHtmlTag
+                    message: removeHtmlTag,
+                    created: firebase.database.ServerValue.TIMESTAMP // the server side date
                 });
             setState({
                 ...state,
