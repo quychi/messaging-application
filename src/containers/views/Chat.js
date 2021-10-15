@@ -18,8 +18,8 @@ import sanitizeHtml from 'sanitize-html';
 import linkifyHtml from 'linkify-html';
 import { parseEmojis } from '../../helpers/parseEmojis';
 import Loading from '../../common/components/Loading';
-import Message from '../../common/components/Message';
-import moment from 'moment';
+import { Container } from '../../common/components/MessageList/Container';
+import firebase from 'firebase';
 
 const ModalComponent = lazy(() => import('../../common/components/Modal'));
 
@@ -47,7 +47,7 @@ export default function Chat() {
             ? memberData.member0Uid + '_' + memberData.member1Uid
             : memberData.member1Uid + '_' + memberData.member0Uid;
 
-    const MY_USER_ID = auth.currentUser.uid; //userData.uid;
+    const MY_USER_ID = auth?.currentUser?.uid; //userData.uid;
 
     const [state, setState] = useState({
         user: auth.currentUser,
@@ -83,25 +83,17 @@ export default function Chat() {
         setupBeforeUnloadListener();
     }, []);
 
-    useEffect(() => {
-        setState({ ...state, readError: null });
-        try {
-            db.ref('chats')
-                .child(roomName)
-                .on('value', (snapshot) => {
-                    let chats = [];
-                    snapshot.forEach((snap) => {
-                        chats.push(snap.val());
-                    });
-                    setState({ ...state, chats: chats });
-                });
-        } catch (error) {
-            setState({ ...state, readError: error.message });
-            console.log('============= read error', error.message);
-        }
-    }, [state.chats.length]);
-
     const handleChange = (evt) => {
+        //Disable Enter key's keycode
+        document
+            .getElementById('disableEnter')
+            .addEventListener('keydown', (evt) => {
+                if (evt.keyCode === 13) {
+                    evt.preventDefault();
+                }
+            });
+
+        //Format link & emojis Of Message
         let value = evt.target.value.replace(
             /<a href=".*?">(.*?)<\/a>/g,
             (match, p1) => p1
@@ -135,12 +127,18 @@ export default function Chat() {
             (match, p1) => p1
         );
         try {
-            await db.ref('chats/' + roomName + '/' + uuid()).set({
-                sentBy: auth.currentUser.uid,
-                message: removeHtmlTag,
-                timestamp: Date.now()
+            await db
+                .ref('chats/' + roomName)
+                .push() //Firebase's .push() function will generate keys based on timestamp
+                .set({
+                    sentBy: auth.currentUser.uid,
+                    message: removeHtmlTag,
+                    created: firebase.database.ServerValue.TIMESTAMP // the server side date
+                });
+            setState({
+                ...state,
+                content: ''
             });
-            setState({ ...state, content: '' });
         } catch (error) {
             console.log(
                 '============  write chats/message error =============',
@@ -210,78 +208,22 @@ export default function Chat() {
         );
     };
 
-    const renderMessages = (
-        previousMessages,
-        currentMessages,
-        nextMessages,
-        index
-    ) => {
-        let isMine = currentMessages.sentBy === MY_USER_ID;
-        let currentMoment = moment(currentMessages.timestamp);
-        let prevBySameAuthor = false;
-        let nextBySameAuthor = false;
-        let startsSequence = true;
-        let endsSequence = true;
-        let showTimestamp = true;
-
-        if (previousMessages) {
-            let previousMoment = moment(previousMessages.timestamp);
-            let previousDuration = moment.duration(
-                currentMoment.diff(previousMoment)
-            );
-            prevBySameAuthor =
-                previousMessages.sentBy === currentMessages.sentBy;
-
-            if (prevBySameAuthor && previousDuration.as('hours') < 1) {
-                startsSequence = false;
-            }
-
-            if (previousDuration.as('hours') < 1) {
-                showTimestamp = false;
-            }
-        }
-
-        if (nextMessages) {
-            let nextMoment = moment(nextMessages.timestamp);
-            let nextDuration = moment.duration(nextMoment.diff(currentMoment));
-            nextBySameAuthor = nextMessages.sentBy === currentMessages.sentBy;
-
-            if (nextBySameAuthor && nextDuration.as('hours') < 1) {
-                endsSequence = false;
-            }
-        }
-
-        return (
-            <Message
-                key={index}
-                isMine={isMine}
-                startsSequence={startsSequence}
-                endsSequence={endsSequence}
-                showTimestamp={showTimestamp}
-                data={currentMessages}
-            />
-        );
-    };
-
     return (
         <div className="chats-page">
             <Suspense fallback={<Loading />}>
                 <ModalLogout />
 
                 <div className="chats">
-                    {state.chats &&
-                        state.chats
-                            .sort((x, y) => {
-                                return x.timestamp - y.timestamp;
-                            })
-                            .map((chat, index) => {
-                                return renderMessages(
-                                    state.chats[index - 1],
-                                    chat,
-                                    state.chats[index + 1],
-                                    index
-                                );
-                            })}
+                    <Container roomName={roomName} />
+                    {/* {state.chats &&
+                        state.chats.map((chat, index) => {
+                            return renderMessages(
+                                state.chats[index - 1],
+                                chat,
+                                state.chats[index + 1],
+                                index
+                            );
+                        })} */}
                 </div>
                 {/* {# message form #} */}
 
@@ -298,6 +240,7 @@ export default function Chat() {
                         >
                             <ContentEditable
                                 className="editable"
+                                id="disableEnter"
                                 tagName="pre"
                                 html={state.content} // innerHTML of the editable div
                                 disabled={false} // use true to disable edition

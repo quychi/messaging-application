@@ -76,7 +76,7 @@ const Header = ({ avatar: avatarImage = '', nickName, gender }) => {
                     <div className={`${showHiddenClass}`}>
                         <ul>
                             <li onClick={toggle}>
-                                <a href="/profile">
+                                <a href="#">
                                     <div>{nickName}</div>
                                     <small>{gender}</small>
                                 </a>
