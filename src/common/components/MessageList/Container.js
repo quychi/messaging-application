@@ -4,7 +4,8 @@ import {
     getMessagePage
 } from '../../../helpers/firebasePagination';
 import { db } from '../../../services/firebase';
-
+import { ToastContainer, toast } from 'react-toastify';
+import i18n from '../../../i18n';
 import { Scroller } from './Scroller';
 
 const wait = (time) =>
@@ -37,6 +38,7 @@ export const Container = ({ roomName }) => {
     const [isMoreData, setIsMoreData] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
     const [listMessages, setListMessages] = useState([]);
+    const notifyError = () => toast.error(i18n.t('error'));
 
     const loadMoreData = async () => {
         setIsLoading(true);
@@ -69,16 +71,19 @@ export const Container = ({ roomName }) => {
                     setListMessages((prev) => [...prev, snap.val()]);
                 });
         } catch (error) {
-            console.log('============= read error', error.message);
+            notifyError();
         }
     };
 
     return (
-        <Scroller
-            listMessages={listMessages}
-            hasMore={isMoreData}
-            loadMoreData={loadMoreData}
-            isLoading={isLoading}
-        />
+        <div>
+            <ToastContainer />
+            <Scroller
+                listMessages={listMessages}
+                hasMore={isMoreData}
+                loadMoreData={loadMoreData}
+                isLoading={isLoading}
+            />
+        </div>
     );
 };

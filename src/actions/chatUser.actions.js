@@ -12,9 +12,6 @@ export const SaveChatUser = (member0Uid = '', member1Uid = '') => {
                 }
             });
         } else {
-            console.log(
-                '==================== can not save chat user because the parameter ==================== '
-            );
             dispatch({
                 type: chatUserConstants.SAVE_CHATUSER_FAILURE
             });

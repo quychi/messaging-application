@@ -20,6 +20,8 @@ import { parseEmojis } from '../../helpers/parseEmojis';
 import Loading from '../../common/components/Loading';
 import { Container } from '../../common/components/MessageList/Container';
 import firebase from 'firebase';
+import { ToastContainer, toast } from 'react-toastify';
+import i18n from '../../i18n';
 
 const ModalComponent = lazy(() => import('../../common/components/Modal'));
 
@@ -42,6 +44,7 @@ export default function Chat() {
     );
     const dispatch = useDispatch();
     const history = useHistory();
+    const notifyError = () => toast.error(i18n.t('error'));
     const roomName =
         memberData.member0Uid < memberData.member1Uid
             ? memberData.member0Uid + '_' + memberData.member1Uid
@@ -77,7 +80,7 @@ export default function Chat() {
                 });
             });
         } catch (error) {
-            console.log('========== errr:', error.message);
+            notifyError();
         }
         //Case 2: user2 close browser tab
         setupBeforeUnloadListener();
@@ -140,10 +143,8 @@ export default function Chat() {
                 content: ''
             });
         } catch (error) {
-            console.log(
-                '============  write chats/message error =============',
-                error.message
-            );
+            notifyError();
+
             setState({ ...state, writeError: error.message });
         }
     };
@@ -154,7 +155,7 @@ export default function Chat() {
         try {
             await auth.signOut();
         } catch (e) {
-            console.log('============= error auth sign out ===============', e);
+            notifyError();
         }
         history.push('/');
     };
@@ -212,6 +213,7 @@ export default function Chat() {
         <div className="chats-page">
             <Suspense fallback={<Loading />}>
                 <ModalLogout />
+                <ToastContainer />
 
                 <div className="chats">
                     <Container roomName={roomName} />
@@ -251,13 +253,14 @@ export default function Chat() {
                                 className="buttonSend"
                                 onClick={handleSubmit}
                             >
-                                Send
+                                {i18n.t('send')}
                             </ButtonComponent>
                         </Row>
                     </Row>
                 </Col>
                 <div>
-                    Login in as: <strong>{state?.user?.email}</strong>
+                    {i18n.t('login in as:')}{' '}
+                    <strong>{state?.user?.email}</strong>
                 </div>
             </Suspense>
         </div>

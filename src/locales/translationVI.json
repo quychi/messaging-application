@@ -1,3 +1,10 @@
 {
-    "test": "test"
+    "welcome": "Chào mừng bạn đến với ứng dụng nhắn tin!",
+    "sign in with facebook": "Đăng nhập bằng Facebook",
+    "sign in with google": "Đăng nhập bằng Google",
+    "login in as:": "Đăng nhập bằng:",
+    "send": "Gửi",
+    "list users": "Danh sách tài khoản",
+    "success": "Thao tác thành công",
+    "error": "Đọc dữ liệu thất bại"
 }

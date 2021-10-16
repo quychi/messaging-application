@@ -8,6 +8,8 @@ import { useSelector } from 'react-redux';
 import styles from './Main.module.css';
 import cx from 'classnames';
 import { useLocation } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import i18n from '../../i18n';
 
 const MainContainer = styled.div`
     height: 100vh;
@@ -31,6 +33,7 @@ function Main({ children }) {
     );
     const location = useLocation();
     const isUserInfoPath = location.pathname === '/usersInfo';
+    const notifyError = () => toast.error(i18n.t('error'));
 
     useEffect(() => {
         try {
@@ -42,13 +45,13 @@ function Main({ children }) {
                 }
             });
         } catch (error) {
-            console.log('========== errr:', error.message);
+            notifyError();
         }
     }, []);
     return (
         <div>
             <Header nickName={nickName} gender={gender} avatar={avatar} />
-
+            <ToastContainer />
             <MainContainer>
                 <div className={cx(styles.scrollable, styles.sidebar)}>
                     {!isUserInfoPath && auth && <ConversationListItem />}

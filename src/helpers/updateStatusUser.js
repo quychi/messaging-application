@@ -7,10 +7,7 @@ export const updateUserStatus = (userUid = null, status) => {
                 status
             });
         } catch (error) {
-            console.log(
-                '============  write data error =============',
-                error.message
-            );
+            //should use react-toastify
         }
-    } else console.log('============ userUid is null =============');
+    }
 };

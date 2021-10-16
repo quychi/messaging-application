@@ -14,8 +14,6 @@ export const Scroller = ({
 }) => {
     const [isScrollable, ref, node] = useIsScrollable([listMessages]);
 
-    console.log('Scroller', listMessages);
-
     useEffect(() => {
         if (!node || isLoading) return;
 
@@ -80,11 +78,6 @@ export const Scroller = ({
 
     const { height: windowHeight } = getWindowDimensions();
     const heightOfHeaderAndSendDiv = 269;
-
-    // console.log(
-    //     '========================',
-    //
-    // );
 
     return (
         <div>
