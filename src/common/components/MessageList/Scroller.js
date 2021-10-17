@@ -4,7 +4,7 @@ import getWindowDimensions from '../../../helpers/useWindowDimensions';
 import { useIsScrollable } from './useIsScrollable';
 import moment from 'moment';
 import Message from '../Message';
-import { auth } from '../../../services/firebase';
+import { useSelector } from 'react-redux';
 
 export const Scroller = ({
     listMessages,
@@ -13,6 +13,9 @@ export const Scroller = ({
     hasMore
 }) => {
     const [isScrollable, ref, node] = useIsScrollable([listMessages]);
+    const userData = useSelector(
+        ({ authReducer }) => authReducer.authUser.user
+    );
 
     useEffect(() => {
         if (!node || isLoading) return;
@@ -28,7 +31,7 @@ export const Scroller = ({
         nextMessages,
         index
     ) => {
-        const MY_USER_ID = auth?.currentUser?.uid; //userData.uid;
+        const MY_USER_ID = userData.uid;
         let isMine = currentMessages.sentBy === MY_USER_ID;
         let currentMoment = moment(currentMessages.timestamp);
         let prevBySameAuthor = false;

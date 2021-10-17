@@ -9,8 +9,8 @@ import { Suspense } from 'react';
 import { updateUserStatus } from '../../../helpers/updateStatusUser';
 import { STATUS } from '../../../constants/const';
 import { auth } from '../../../services/firebase';
-import { useDispatch } from 'react-redux';
-import { ClearAuthUser } from '../../../actions';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearAuthUser, clearChatUser } from '../../../actions';
 import { useHistory } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import i18n from '../../../i18n';
@@ -21,6 +21,9 @@ const Header = ({ avatar: avatarImage = '', nickName, gender }) => {
     const [showMenu, setShowMenu] = useState(false);
     const dispatch = useDispatch();
     const history = useHistory();
+    const userData = useSelector(
+        ({ authReducer }) => authReducer.authUser.user
+    );
     const notifyError = () => toast.error(i18n.t('error'));
 
     let showHiddenClass = `${
@@ -32,8 +35,9 @@ const Header = ({ avatar: avatarImage = '', nickName, gender }) => {
     };
 
     const handleLogout = async () => {
-        updateUserStatus(auth.currentUser.uid, STATUS.OFFLINE);
-        dispatch(ClearAuthUser());
+        updateUserStatus(userData.uid, STATUS.OFFLINE);
+        dispatch(clearAuthUser());
+        dispatch(clearChatUser());
         try {
             await auth.signOut();
         } catch (e) {

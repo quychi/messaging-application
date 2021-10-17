@@ -25,7 +25,7 @@ const chatUserReducer = (state = initialState, action) => {
                     ...state.chatUser,
                     member0Uid: action.payload.member0Uid,
                     member1Uid: action.payload.member1Uid,
-                    isSave: false
+                    isSave: true
                 }
             };
         case chatUserConstants.SAVE_CHATUSER_FAILURE:
@@ -37,6 +37,32 @@ const chatUserReducer = (state = initialState, action) => {
                 }
             };
 
+        case chatUserConstants.CLEAR_CHATUSER_REQUEST:
+            return {
+                ...state,
+                chatUser: {
+                    ...state.chatUser,
+                    isSave: true
+                }
+            };
+        case chatUserConstants.CLEAR_CHATUSER_SUCCESS:
+            return {
+                ...state,
+                chatUser: {
+                    ...state.chatUser,
+                    member0Uid: action.payload.member0Uid,
+                    member1Uid: action.payload.member1Uid,
+                    isSave: false //clear data
+                }
+            };
+        case chatUserConstants.CLEAR_CHATUSER_FAILURE:
+            return {
+                ...state,
+                chatUser: {
+                    ...state.chatUser,
+                    isSave: false
+                }
+            };
         default:
             return state;
     }

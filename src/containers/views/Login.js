@@ -4,7 +4,7 @@ import { GoogleOutlined, FacebookOutlined } from '@ant-design/icons';
 import { auth, db } from '../../services/firebase';
 import firebase from 'firebase/app';
 import { useDispatch, useSelector } from 'react-redux';
-import { GetAuthUser } from '../../actions/index';
+import { clearAuthUser, clearChatUser, getAuthUser } from '../../actions/index';
 import { useHistory } from 'react-router-dom';
 import { updateUserStatus } from '../../helpers/updateStatusUser';
 import { STATUS } from '../../constants/const';
@@ -20,7 +20,7 @@ function Login() {
     useEffect(() => {
         auth.onAuthStateChanged((user) => {
             //authStateChanged <=> (login || logout). Logout -> user is null
-            dispatch(GetAuthUser(user));
+            dispatch(getAuthUser(user)); //đã bắt !user trong getAuthUser
             if (user) {
                 db.ref()
                     .child('users/' + user.uid)
@@ -31,6 +31,11 @@ function Login() {
                             history.push('/conversationListItem');
                         } else history.push('/usersInfo');
                     });
+            } else {
+                //case:logout của authStateChanged
+                //ko cần dispatch xóa data trong store (2 dòng dưới) vì đã handle hết ở logout
+                // dispatch(clearAuthUser());
+                // dispatch(clearChatUser());
             }
         });
     });

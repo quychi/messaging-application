@@ -2,7 +2,7 @@ import React, { lazy, useRef, useState } from 'react';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { ClearAuthUser } from '../../actions';
+import { clearAuthUser, clearChatUser } from '../../actions';
 import { auth } from '../../services/firebase';
 import { db } from '../../services/firebase';
 import { v1 as uuid } from 'uuid';
@@ -45,12 +45,11 @@ export default function Chat() {
     const dispatch = useDispatch();
     const history = useHistory();
     const notifyError = () => toast.error(i18n.t('error'));
+    const notifyWriteError = () => toast.error(i18n.t('write error'));
     const roomName =
         memberData.member0Uid < memberData.member1Uid
             ? memberData.member0Uid + '_' + memberData.member1Uid
             : memberData.member1Uid + '_' + memberData.member0Uid;
-
-    const MY_USER_ID = auth?.currentUser?.uid; //userData.uid;
 
     const [state, setState] = useState({
         user: auth.currentUser,
@@ -134,7 +133,7 @@ export default function Chat() {
                 .ref('chats/' + roomName)
                 .push() //Firebase's .push() function will generate keys based on timestamp
                 .set({
-                    sentBy: auth.currentUser.uid,
+                    sentBy: userData.uid,
                     message: removeHtmlTag,
                     created: firebase.database.ServerValue.TIMESTAMP // the server side date
                 });
@@ -143,15 +142,16 @@ export default function Chat() {
                 content: ''
             });
         } catch (error) {
-            notifyError();
+            notifyWriteError();
 
             setState({ ...state, writeError: error.message });
         }
     };
 
     const handleLogout = async () => {
-        updateUserStatus(auth.currentUser.uid, STATUS.OFFLINE);
-        dispatch(ClearAuthUser());
+        updateUserStatus(userData.uid, STATUS.OFFLINE);
+        dispatch(clearChatUser());
+        dispatch(clearAuthUser());
         try {
             await auth.signOut();
         } catch (e) {
@@ -161,7 +161,8 @@ export default function Chat() {
     };
 
     const closeChatWindow = () => {
-        updateUserStatus(auth.currentUser.uid, STATUS.AVAILABLE);
+        updateUserStatus(userData.uid, STATUS.AVAILABLE);
+        dispatch(clearChatUser());
         history.push('/conversationListItem');
     };
 

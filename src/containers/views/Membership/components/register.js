@@ -19,7 +19,6 @@ import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { auth, db } from '../../../../services/firebase';
 
-import { getDatabase, ref, set } from 'firebase/database';
 import MD5 from 'crypto-js/md5';
 import { GENDER, STATUS } from '../../../../constants/const';
 
@@ -37,7 +36,7 @@ const Register = () => {
         sendForm.validateFields(['nickName', 'birthday', 'gender']).then(() => {
             const dataForm = sendForm.getFieldsValue();
             try {
-                const uid = auth.currentUser.uid; //userData.uid,
+                const uid = userData.uid;
                 db.ref('users/' + uid).set({
                     nickName: dataForm.nickName,
                     birthday: moment(dataForm.birthday).format('DD/MM/YYYY'),

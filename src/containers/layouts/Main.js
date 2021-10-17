@@ -31,13 +31,16 @@ function Main({ children }) {
     const memberData = useSelector(
         ({ chatUserReducer }) => chatUserReducer.chatUser
     );
+    const userData = useSelector(
+        ({ authReducer }) => authReducer.authUser.user
+    );
     const location = useLocation();
     const isUserInfoPath = location.pathname === '/usersInfo';
     const notifyError = () => toast.error(i18n.t('error'));
 
     useEffect(() => {
         try {
-            db.ref('users/' + auth.currentUser.uid).on('value', (snapshot) => {
+            db.ref('users/' + userData.uid).on('value', (snapshot) => {
                 if (snapshot.val()) {
                     setNickName(snapshot.val().nickName);
                     setGender(snapshot.val().gender);
