@@ -8,14 +8,17 @@ import { updateUserStatus } from '../../../helpers/updateStatusUser';
 import { auth, db } from '../../../services/firebase';
 import styles from './ConversationListItem.module.css';
 import cx from 'classnames';
+import { ToastContainer, toast } from 'react-toastify';
+import i18n from '../../../i18n';
 
 export default function ConversationListItem(props) {
     // const { nickname, photo, status } = props.data;
 
-    const [onlineUsers, setOnlineUsers] = useState([]);
+    const [unAvailableUsers, setUnAvailableUsers] = useState([]);
     const [availableUsers, setAvailableUsers] = useState([]);
     const dispatch = useDispatch();
     const history = useHistory();
+    const notifyError = () => toast.error(i18n.t('error'));
 
     const getAvailableUsers = async () => {
         try {
@@ -26,14 +29,18 @@ export default function ConversationListItem(props) {
                         onlineUsersArray.push(snap.val());
                     }
                 });
-                setOnlineUsers(onlineUsersArray);
                 const availableUsersArray = onlineUsersArray.filter(
                     (obj) => obj.status === STATUS.AVAILABLE
                 );
                 setAvailableUsers(availableUsersArray);
+
+                const unAvailableUsersArray = onlineUsersArray.filter(
+                    (obj) => obj.status === STATUS.UNAVAILABLE
+                );
+                setUnAvailableUsers(unAvailableUsersArray);
             });
         } catch (error) {
-            console.log('========== errr:', error.message);
+            notifyError();
         }
     };
 
@@ -60,12 +67,10 @@ export default function ConversationListItem(props) {
                     member2: userUid2
                 });
             } catch (error) {
-                console.log('============ write err:', error.message);
+                notifyError();
             }
         } else {
-            console.log(
-                '============ write err: userUid1 or userUid2 is null ============ '
-            );
+            notifyError();
         }
     };
 
@@ -80,7 +85,8 @@ export default function ConversationListItem(props) {
 
     return (
         <Col xs={24} md={24}>
-            <h3 style={{ color: '#0055A9' }}>Available Users</h3>
+            <ToastContainer />
+            <h3 style={{ color: '#0055A9' }}>{i18n.t('list users')}</h3>
             {availableUsers &&
                 availableUsers.map((item, i) => (
                     <div
@@ -98,15 +104,13 @@ export default function ConversationListItem(props) {
                                 {item.nickName}
                             </h1>
                             <p className={styles.conversationSnippet}>
-                                online{','}&nbsp;not in any conversation
+                                Available
                             </p>
                         </div>
                     </div>
                 ))}
-
-            <h3 style={{ color: '#0055A9' }}>Unavailable Users</h3>
-            {onlineUsers &&
-                onlineUsers.map((item, i) => (
+            {unAvailableUsers &&
+                unAvailableUsers.map((item, i) => (
                     <div
                         className={cx(
                             styles.conversationListItem,
@@ -124,7 +128,7 @@ export default function ConversationListItem(props) {
                                 {item.nickName}
                             </h1>
                             <p className={styles.conversationSnippet}>
-                                online{','}&nbsp;in conversation
+                                Unavailable
                             </p>
                         </div>
                     </div>

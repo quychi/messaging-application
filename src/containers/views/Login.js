@@ -8,6 +8,7 @@ import { GetAuthUser } from '../../actions/index';
 import { useHistory } from 'react-router-dom';
 import { updateUserStatus } from '../../helpers/updateStatusUser';
 import { STATUS } from '../../constants/const';
+import i18n from '../../i18n';
 
 function Login() {
     const dispatch = useDispatch();
@@ -37,7 +38,7 @@ function Login() {
     return (
         <div id="login-page">
             <div id="login-card">
-                <h2>Welcome to Messaging Application!</h2>
+                <h2> {i18n.t('welcome')}</h2>
 
                 <div
                     className="login-button google"
@@ -47,7 +48,7 @@ function Login() {
                         );
                     }}
                 >
-                    <GoogleOutlined /> Sign In with Google
+                    <GoogleOutlined /> {i18n.t('sign in with google')}
                 </div>
 
                 <br />
@@ -61,7 +62,7 @@ function Login() {
                         )
                     }
                 >
-                    <FacebookOutlined /> Sign In with Facebook
+                    <FacebookOutlined /> {i18n.t('sign in with facebook')}
                 </div>
             </div>
         </div>

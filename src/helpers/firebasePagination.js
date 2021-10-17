@@ -28,10 +28,7 @@ export const firebaseShallowKeys = async (roomName) => {
                 };
             });
     } catch (error) {
-        console.log(
-            '============ error firebaseShallowKeys=============',
-            error
-        );
+        //should use react-toastify
         return error;
     }
 };
@@ -63,7 +60,7 @@ export const getMessagePage = async (callNumber, roomName, keys, pageCount) => {
             return page;
         },
         function (error) {
-            console.log(error);
+            //should use react-toastify
             query.off();
             return error;
         }

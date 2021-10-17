@@ -8,6 +8,7 @@ import ConversationListItem from './common/components/ConversationListItem';
 import { auth } from './services/firebase';
 
 import 'antd/dist/antd.css';
+import 'react-toastify/dist/ReactToastify.css';
 
 import { connect } from 'react-redux';
 

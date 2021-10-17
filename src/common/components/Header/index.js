@@ -12,6 +12,8 @@ import { auth } from '../../../services/firebase';
 import { useDispatch } from 'react-redux';
 import { ClearAuthUser } from '../../../actions';
 import { useHistory } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import i18n from '../../../i18n';
 
 const Language = lazy(() => import('../Language'));
 
@@ -19,6 +21,7 @@ const Header = ({ avatar: avatarImage = '', nickName, gender }) => {
     const [showMenu, setShowMenu] = useState(false);
     const dispatch = useDispatch();
     const history = useHistory();
+    const notifyError = () => toast.error(i18n.t('error'));
 
     let showHiddenClass = `${
         showMenu ? styles.dropdownMenu : styles.dropdownclose //styles... not `styles...`
@@ -34,13 +37,14 @@ const Header = ({ avatar: avatarImage = '', nickName, gender }) => {
         try {
             await auth.signOut();
         } catch (e) {
-            console.log('============= error auth sign out ===============', e);
+            notifyError();
         }
         history.push('/');
     };
 
     return (
         <Suspense fallback={<Loading />}>
+            <ToastContainer />
             <div className={styles.header}>
                 <div className={styles.headerContainer}>
                     <a href="/" className={styles.headerContainer__logo}>

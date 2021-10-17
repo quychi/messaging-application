@@ -13,7 +13,8 @@ import { FooterButtonWrapper } from '../styled';
 import ButtonComponent from '../../../../common/components/Button';
 import InputComponent from '../../../../common/components/WelcomeInput';
 import SelectComponent from '../../../../common/components/WelcomeSelect';
-
+import { ToastContainer, toast } from 'react-toastify';
+import i18n from '../../../../i18n';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { auth, db } from '../../../../services/firebase';
@@ -28,7 +29,8 @@ const Register = () => {
         ({ authReducer }) => authReducer.authUser.user
     );
     const history = useHistory();
-    const address = String(auth.currentUser.email).trim().toLowerCase();
+    const notifyError = () => toast.error(i18n.t('error'));
+    const address = String(auth.currentUser.email).trim().toLowerCase() || '';
     const hash = MD5(address).toString();
 
     const handleSubmit = () => {
@@ -46,13 +48,14 @@ const Register = () => {
                 });
                 history.push('/conversationListItem');
             } catch (error) {
-                console.log('==================== writeError:', error.message);
+                notifyError();
             }
         });
     };
 
     return (
         <div>
+            <ToastContainer />
             <Col md={12} xs={24} align="start" justify="space-between">
                 <Form
                     form={sendForm}
