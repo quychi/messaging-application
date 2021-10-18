@@ -58,6 +58,7 @@ export const Container = ({ roomName }) => {
             await listenNewMessage(roomName);
         };
         fetchData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const listenNewMessage = async (roomName) => {

@@ -1,4 +1,5 @@
 import React, { lazy, useState } from 'react';
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import { BiMessageRoundedCheck } from 'react-icons/bi';
 import { RiNotificationLine } from 'react-icons/ri';
 import { FiSearch } from 'react-icons/fi';
@@ -30,10 +31,12 @@ const Header = ({ avatar: avatarImage = '', nickName, gender }) => {
         showMenu ? styles.dropdownMenu : styles.dropdownclose //styles... not `styles...`
     }`;
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const toggle = () => {
         setShowMenu(!showMenu);
     };
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const handleLogout = async () => {
         updateUserStatus(userData.uid, STATUS.OFFLINE);
         dispatch(clearAuthUser());
@@ -77,14 +80,14 @@ const Header = ({ avatar: avatarImage = '', nickName, gender }) => {
                         </i>
                         <Language size={24} />
                         <span onClick={toggle}>
-                            <img src={avatarImage} alt="Picture Profile" />
+                            <img src={avatarImage} alt="Profile" />
                         </span>
                     </div>
 
                     <div className={`${showHiddenClass}`}>
                         <ul>
                             <li onClick={toggle}>
-                                <a href="#">
+                                <a href="">
                                     <div>{nickName}</div>
                                     <small>{gender}</small>
                                 </a>

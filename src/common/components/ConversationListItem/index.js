@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 import { saveChatUser } from '../../../actions/chatUser.actions';
 import { STATUS } from '../../../constants/const';
 import { updateUserStatus } from '../../../helpers/updateStatusUser';
-import { auth, db } from '../../../services/firebase';
+import { db } from '../../../services/firebase';
 import styles from './ConversationListItem.module.css';
 import cx from 'classnames';
 import { ToastContainer, toast } from 'react-toastify';
@@ -50,6 +50,7 @@ export default function ConversationListItem(props) {
 
     useEffect(() => {
         getUsers();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const createRoom = async (userUid1 = null, userUid2 = null) => {

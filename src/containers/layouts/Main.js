@@ -50,6 +50,7 @@ function Main({ children }) {
         } catch (error) {
             notifyError();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     return (
         <div>

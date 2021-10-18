@@ -13,8 +13,6 @@ import { ReactComponent as Emoji2ImgSvg } from '../../images/grinningSquintingFa
 import { ReactComponent as Emoji3ImgSvg } from '../../images/rollingOnTheFloorLaughing.svg';
 import { ReactComponent as Emoji4ImgSvg } from '../../images/beamingFaceWithSmilingEyes.svg';
 
-const virus1Img = require('../../images/uk.png');
-
 const ModalComponent = ({ children, scroll, visible, ...props }) => {
     const scrollRef = useRef(null);
 

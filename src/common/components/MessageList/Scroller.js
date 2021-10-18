@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import getWindowDimensions from '../../../helpers/useWindowDimensions';
 import { useIsScrollable } from './useIsScrollable';
 import moment from 'moment';
 import Message from '../Message';
@@ -23,6 +22,7 @@ export const Scroller = ({
         if (!isScrollable && hasMore) {
             loadMoreData();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isLoading, isScrollable, hasMore, node]);
 
     const renderMessages = (
@@ -78,9 +78,6 @@ export const Scroller = ({
             />
         );
     };
-
-    const { height: windowHeight } = getWindowDimensions();
-    const heightOfHeaderAndSendDiv = 269;
 
     return (
         <div>

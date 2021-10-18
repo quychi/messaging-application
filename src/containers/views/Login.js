@@ -3,8 +3,8 @@ import { GoogleOutlined, FacebookOutlined } from '@ant-design/icons';
 
 import { auth, db } from '../../services/firebase';
 import firebase from 'firebase/app';
-import { useDispatch, useSelector } from 'react-redux';
-import { clearAuthUser, clearChatUser, getAuthUser } from '../../actions/index';
+import { useDispatch } from 'react-redux';
+import { getAuthUser } from '../../actions/index';
 import { useHistory } from 'react-router-dom';
 import { updateUserStatus } from '../../helpers/updateStatusUser';
 import { STATUS } from '../../constants/const';
@@ -13,9 +13,6 @@ import i18n from '../../i18n';
 function Login() {
     const dispatch = useDispatch();
     const history = useHistory();
-    const userData = useSelector(
-        ({ authReducer }) => authReducer.authUser.user
-    );
 
     useEffect(() => {
         auth.onAuthStateChanged((user) => {

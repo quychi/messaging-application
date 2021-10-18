@@ -1,20 +1,18 @@
-import React, { lazy, useRef, useState } from 'react';
+import React, { lazy, useState } from 'react';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { clearAuthUser, clearChatUser } from '../../actions';
+import { clearChatUser } from '../../actions';
 import { auth } from '../../services/firebase';
 import { db } from '../../services/firebase';
-import { v1 as uuid } from 'uuid';
 import { STATUS } from '../../constants/const';
-import { Col, Form, Row } from 'antd';
+import { Col, Row } from 'antd';
 import { Suspense } from 'react';
 import ButtonComponent from '../../common/components/Button';
 import { FooterButtonWrapper } from './Membership/styled';
 import styled from 'styled-components';
 import { updateUserStatus } from '../../helpers/updateStatusUser';
 import ContentEditable from 'react-contenteditable';
-import sanitizeHtml from 'sanitize-html';
 import linkifyHtml from 'linkify-html';
 import { parseEmojis } from '../../helpers/parseEmojis';
 import Loading from '../../common/components/Loading';
@@ -35,7 +33,6 @@ const Heading = styled.h1`
 `;
 
 export default function Chat() {
-    const [sendForm] = Form.useForm();
     const userData = useSelector(
         ({ authReducer }) => authReducer.authUser.user
     );
@@ -83,6 +80,7 @@ export default function Chat() {
         }
         //Case 2: user2 close browser tab
         // setupBeforeUnloadListener();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleChange = (evt) => {
@@ -109,17 +107,17 @@ export default function Chat() {
         });
     };
 
-    const sanitizeConf = {
-        allowedTags: ['b', 'i', 'em', 'strong', 'a', 'p', 'h1'],
-        allowedAttributes: { a: ['href'] }
-    };
-
-    const sanitize = () => {
-        setState({
-            ...state,
-            content: sanitizeHtml(state.content, sanitizeConf)
-        });
-    };
+    // const sanitizeConf = {
+    //     allowedTags: ['b', 'i', 'em', 'strong', 'a', 'p', 'h1'],
+    //     allowedAttributes: { a: ['href'] }
+    // };
+    //
+    // const sanitize = () => {
+    //     setState({
+    //         ...state,
+    //         content: sanitizeHtml(state.content, sanitizeConf)
+    //     });
+    // };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -148,18 +146,7 @@ export default function Chat() {
         }
     };
 
-    const handleLogout = async () => {
-        updateUserStatus(userData.uid, STATUS.OFFLINE);
-        dispatch(clearChatUser());
-        dispatch(clearAuthUser());
-        try {
-            await auth.signOut();
-        } catch (e) {
-            notifyError();
-        }
-        history.push('/');
-    };
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const closeChatWindow = () => {
         updateUserStatus(userData.uid, STATUS.AVAILABLE);
         dispatch(clearChatUser());
