@@ -61,12 +61,12 @@ export default function Chat() {
     const [logoutModal, setLogoutModal] = useState(false);
 
     // Setup the `beforeunload` event listener
-    const setupBeforeUnloadListener = () => {
-        window.addEventListener('beforeunload', (ev) => {
-            ev.preventDefault();
-            return handleLogout();
-        });
-    };
+    // const setupBeforeUnloadListener = () => {
+    //     window.addEventListener('beforeunload', (ev) => {
+    //         ev.preventDefault();
+    //         return handleLogout();
+    //     });
+    // };
 
     useEffect(() => {
         //Case 1: user2 logout
@@ -82,7 +82,7 @@ export default function Chat() {
             notifyError();
         }
         //Case 2: user2 close browser tab
-        setupBeforeUnloadListener();
+        // setupBeforeUnloadListener();
     }, []);
 
     const handleChange = (evt) => {
