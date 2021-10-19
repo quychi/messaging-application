@@ -1,4 +1,4 @@
-import React, { lazy, useState } from 'react';
+import React, { lazy, useMemo, useState } from 'react';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -153,8 +153,8 @@ export default function Chat() {
         history.push('/conversationListItem');
     };
 
-    const ModalLogout = () => {
-        return (
+    const ModalLogout = useMemo(
+        () => (
             <ModalComponent
                 width={560}
                 scroll={false}
@@ -194,13 +194,14 @@ export default function Chat() {
                     </Col>
                 </Col>
             </ModalComponent>
-        );
-    };
+        ),
+        [logoutModal, closeChatWindow]
+    );
 
     return (
         <div className="chats-page">
             <Suspense fallback={<Loading />}>
-                <ModalLogout />
+                {ModalLogout}
                 <ToastContainer />
 
                 <div className="chats">
