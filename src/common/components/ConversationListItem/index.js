@@ -36,14 +36,13 @@ export default function ConversationListItem(props) {
                         onlineUsersArray.push(snap.val());
                     }
                 });
+                //availableUsers is available user && user chatting with me
                 const availableUsersArray = onlineUsersArray.filter(
-                    (obj) => obj.status === STATUS.AVAILABLE
+                    (obj) => (obj.status === STATUS.AVAILABLE || obj.status === userData.uid)
                 );
                 setAvailableUsers(availableUsersArray);
-
-                const unAvailableUsersArray = onlineUsersArray.filter(
-                    (obj) => obj.status === STATUS.UNAVAILABLE
-                );
+                //unavailable users 
+                const unAvailableUsersArray = onlineUsersArray.filter(x => !availableUsersArray.includes(x));
                 setUnAvailableUsers(unAvailableUsersArray);
             });
         } catch (error) {
@@ -86,8 +85,8 @@ export default function ConversationListItem(props) {
         const toUserUid = itemUid;
         dispatch(saveChatUser(userData.uid, toUserUid));
         createRoom(userData.uid, toUserUid);
-        updateUserStatus(userData.uid, STATUS.UNAVAILABLE);
-        updateUserStatus(toUserUid, STATUS.UNAVAILABLE);
+        updateUserStatus(userData.uid, toUserUid);
+        updateUserStatus(toUserUid, userData.uid);
         history.push('/chats');
     };
 

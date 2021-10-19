@@ -1,11 +1,14 @@
 # Messaging Application
+Note: The latest source code is on branch "dev".
 
 Problem remaining: Can not handle case 2: one of two users close tab/browser. The `beforeunload` event include 3 actions: back page, refresh the page, close tab/browser, so I can not distinguish close tab/browser action with 2 action above.
 
 ## Introduction
 
 This is a Realtime Chat Application with Social Auth.
+
 A react chat app using: React, Redux, ES6, Firebase, Ant design,...
+
 Some dependencies: redux-persist, i18next, axios, eslint, prettier, react-toastify,...
 
 ** Feature:
@@ -17,9 +20,15 @@ Some dependencies: redux-persist, i18next, axios, eslint, prettier, react-toasti
 - Translate language (VI/EN)
 - Load more messages.
 
+## Installation instructions
+In the project directory, you can run:
+### `yarn`
+### `yarn start`
+### `yarn build`
+...
 ## Realtime Database
 This database design for 2 user chatting, but it can be scale in the future.
-
+```
 db
 |
 +-chats
@@ -54,9 +63,9 @@ db
 |   |   |
 |   |   +--nickName
 |   |   |
-|   |   +--status //0: offline, 1: available, 2: unavailable
+|   |   +--status //0: offline, 1: available, userUid: unavailable
 |   |   |
 |   |   +--uid
-
+```
 ## Demo
 Hosting URL: https://messaging-application-cbe90.web.app/
