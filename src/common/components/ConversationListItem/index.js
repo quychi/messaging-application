@@ -29,7 +29,10 @@ export default function ConversationListItem(props) {
             await db.ref('users').on('value', (snapshot) => {
                 let onlineUsersArray = [];
                 snapshot.forEach((snap) => {
-                    if (snap.val().status !== STATUS.OFFLINE) {
+                    if (
+                        snap.val().status !== STATUS.OFFLINE &&
+                        snap.val().uid !== userData.uid
+                    ) {
                         onlineUsersArray.push(snap.val());
                     }
                 });

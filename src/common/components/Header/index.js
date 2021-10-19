@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { lazy, useMemo, useState } from 'react';
 import { BiMessageRoundedCheck } from 'react-icons/bi';
 import { RiNotificationLine } from 'react-icons/ri';
