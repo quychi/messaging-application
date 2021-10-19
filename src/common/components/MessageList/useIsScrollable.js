@@ -12,6 +12,7 @@ export const useIsScrollable = (dependencies) => {
         if (!node) return;
 
         setIsScrollable(node.scrollHeight > node.clientHeight);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [...dependencies, node]);
 
     useLayoutEffect(() => {

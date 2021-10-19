@@ -1,11 +1,11 @@
 import { Col } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { SaveChatUser } from '../../../actions/chatUser.actions';
+import { saveChatUser } from '../../../actions/chatUser.actions';
 import { STATUS } from '../../../constants/const';
 import { updateUserStatus } from '../../../helpers/updateStatusUser';
-import { auth, db } from '../../../services/firebase';
+import { db } from '../../../services/firebase';
 import styles from './ConversationListItem.module.css';
 import cx from 'classnames';
 import { ToastContainer, toast } from 'react-toastify';
@@ -19,13 +19,20 @@ export default function ConversationListItem(props) {
     const dispatch = useDispatch();
     const history = useHistory();
     const notifyError = () => toast.error(i18n.t('error'));
+    const notifyWriteError = () => toast.error(i18n.t('write error'));
+    const userData = useSelector(
+        ({ authReducer }) => authReducer.authUser.user
+    );
 
-    const getAvailableUsers = async () => {
+    const getUsers = async () => {
         try {
             await db.ref('users').on('value', (snapshot) => {
                 let onlineUsersArray = [];
                 snapshot.forEach((snap) => {
-                    if (snap.val().status !== STATUS.OFFLINE) {
+                    if (
+                        snap.val().status !== STATUS.OFFLINE &&
+                        snap.val().uid !== userData.uid
+                    ) {
                         onlineUsersArray.push(snap.val());
                     }
                 });
@@ -45,7 +52,8 @@ export default function ConversationListItem(props) {
     };
 
     useEffect(() => {
-        getAvailableUsers();
+        getUsers();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const createRoom = async (userUid1 = null, userUid2 = null) => {
@@ -67,18 +75,18 @@ export default function ConversationListItem(props) {
                     member2: userUid2
                 });
             } catch (error) {
-                notifyError();
+                notifyWriteError();
             }
         } else {
-            notifyError();
+            notifyWriteError();
         }
     };
 
     const handleClick = (itemUid) => {
         const toUserUid = itemUid;
-        dispatch(SaveChatUser(auth.currentUser.uid, toUserUid)); //userData.uid
-        createRoom(auth.currentUser.uid, toUserUid);
-        updateUserStatus(auth.currentUser.uid, STATUS.UNAVAILABLE);
+        dispatch(saveChatUser(userData.uid, toUserUid));
+        createRoom(userData.uid, toUserUid);
+        updateUserStatus(userData.uid, STATUS.UNAVAILABLE);
         updateUserStatus(toUserUid, STATUS.UNAVAILABLE);
         history.push('/chats');
     };

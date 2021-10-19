@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { Suspense, lazy } from 'react';
 import {
     Col
     // Checkbox,

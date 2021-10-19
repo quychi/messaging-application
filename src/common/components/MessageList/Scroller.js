@@ -1,10 +1,9 @@
 import React, { useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import getWindowDimensions from '../../../helpers/useWindowDimensions';
 import { useIsScrollable } from './useIsScrollable';
 import moment from 'moment';
 import Message from '../Message';
-import { auth } from '../../../services/firebase';
+import { useSelector } from 'react-redux';
 
 export const Scroller = ({
     listMessages,
@@ -13,6 +12,9 @@ export const Scroller = ({
     hasMore
 }) => {
     const [isScrollable, ref, node] = useIsScrollable([listMessages]);
+    const userData = useSelector(
+        ({ authReducer }) => authReducer.authUser.user
+    );
 
     useEffect(() => {
         if (!node || isLoading) return;
@@ -20,6 +22,7 @@ export const Scroller = ({
         if (!isScrollable && hasMore) {
             loadMoreData();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isLoading, isScrollable, hasMore, node]);
 
     const renderMessages = (
@@ -28,7 +31,7 @@ export const Scroller = ({
         nextMessages,
         index
     ) => {
-        const MY_USER_ID = auth?.currentUser?.uid; //userData.uid;
+        const MY_USER_ID = userData.uid;
         let isMine = currentMessages.sentBy === MY_USER_ID;
         let currentMoment = moment(currentMessages.timestamp);
         let prevBySameAuthor = false;
@@ -75,9 +78,6 @@ export const Scroller = ({
             />
         );
     };
-
-    const { height: windowHeight } = getWindowDimensions();
-    const heightOfHeaderAndSendDiv = 269;
 
     return (
         <div>

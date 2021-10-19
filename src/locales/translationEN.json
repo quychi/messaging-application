@@ -6,5 +6,6 @@
     "send": "Send",
     "list users": "List Users",
     "success": "Action performed success",
+    "write error": "Action performed failed",
     "error": "Read data failed"
 }

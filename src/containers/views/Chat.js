@@ -1,20 +1,18 @@
-import React, { lazy, useRef, useState } from 'react';
+import React, { lazy, useMemo, useState } from 'react';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { ClearAuthUser } from '../../actions';
+import { clearChatUser } from '../../actions';
 import { auth } from '../../services/firebase';
 import { db } from '../../services/firebase';
-import { v1 as uuid } from 'uuid';
 import { STATUS } from '../../constants/const';
-import { Col, Form, Row } from 'antd';
+import { Col, Row } from 'antd';
 import { Suspense } from 'react';
 import ButtonComponent from '../../common/components/Button';
 import { FooterButtonWrapper } from './Membership/styled';
 import styled from 'styled-components';
 import { updateUserStatus } from '../../helpers/updateStatusUser';
 import ContentEditable from 'react-contenteditable';
-import sanitizeHtml from 'sanitize-html';
 import linkifyHtml from 'linkify-html';
 import { parseEmojis } from '../../helpers/parseEmojis';
 import Loading from '../../common/components/Loading';
@@ -35,7 +33,6 @@ const Heading = styled.h1`
 `;
 
 export default function Chat() {
-    const [sendForm] = Form.useForm();
     const userData = useSelector(
         ({ authReducer }) => authReducer.authUser.user
     );
@@ -45,12 +42,11 @@ export default function Chat() {
     const dispatch = useDispatch();
     const history = useHistory();
     const notifyError = () => toast.error(i18n.t('error'));
+    const notifyWriteError = () => toast.error(i18n.t('write error'));
     const roomName =
         memberData.member0Uid < memberData.member1Uid
             ? memberData.member0Uid + '_' + memberData.member1Uid
             : memberData.member1Uid + '_' + memberData.member0Uid;
-
-    const MY_USER_ID = auth?.currentUser?.uid; //userData.uid;
 
     const [state, setState] = useState({
         user: auth.currentUser,
@@ -62,12 +58,12 @@ export default function Chat() {
     const [logoutModal, setLogoutModal] = useState(false);
 
     // Setup the `beforeunload` event listener
-    const setupBeforeUnloadListener = () => {
-        window.addEventListener('beforeunload', (ev) => {
-            ev.preventDefault();
-            return handleLogout();
-        });
-    };
+    // const setupBeforeUnloadListener = () => {
+    //     window.addEventListener('beforeunload', (ev) => {
+    //         ev.preventDefault();
+    //         return handleLogout();
+    //     });
+    // };
 
     useEffect(() => {
         //Case 1: user2 logout
@@ -83,7 +79,8 @@ export default function Chat() {
             notifyError();
         }
         //Case 2: user2 close browser tab
-        setupBeforeUnloadListener();
+        // setupBeforeUnloadListener();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleChange = (evt) => {
@@ -110,17 +107,17 @@ export default function Chat() {
         });
     };
 
-    const sanitizeConf = {
-        allowedTags: ['b', 'i', 'em', 'strong', 'a', 'p', 'h1'],
-        allowedAttributes: { a: ['href'] }
-    };
-
-    const sanitize = () => {
-        setState({
-            ...state,
-            content: sanitizeHtml(state.content, sanitizeConf)
-        });
-    };
+    // const sanitizeConf = {
+    //     allowedTags: ['b', 'i', 'em', 'strong', 'a', 'p', 'h1'],
+    //     allowedAttributes: { a: ['href'] }
+    // };
+    //
+    // const sanitize = () => {
+    //     setState({
+    //         ...state,
+    //         content: sanitizeHtml(state.content, sanitizeConf)
+    //     });
+    // };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -134,7 +131,7 @@ export default function Chat() {
                 .ref('chats/' + roomName)
                 .push() //Firebase's .push() function will generate keys based on timestamp
                 .set({
-                    sentBy: auth.currentUser.uid,
+                    sentBy: userData.uid,
                     message: removeHtmlTag,
                     created: firebase.database.ServerValue.TIMESTAMP // the server side date
                 });
@@ -143,30 +140,21 @@ export default function Chat() {
                 content: ''
             });
         } catch (error) {
-            notifyError();
+            notifyWriteError();
 
             setState({ ...state, writeError: error.message });
         }
     };
 
-    const handleLogout = async () => {
-        updateUserStatus(auth.currentUser.uid, STATUS.OFFLINE);
-        dispatch(ClearAuthUser());
-        try {
-            await auth.signOut();
-        } catch (e) {
-            notifyError();
-        }
-        history.push('/');
-    };
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const closeChatWindow = () => {
-        updateUserStatus(auth.currentUser.uid, STATUS.AVAILABLE);
+        updateUserStatus(userData.uid, STATUS.AVAILABLE);
+        dispatch(clearChatUser());
         history.push('/conversationListItem');
     };
 
-    const ModalLogout = () => {
-        return (
+    const ModalLogout = useMemo(
+        () => (
             <ModalComponent
                 width={560}
                 scroll={false}
@@ -206,13 +194,14 @@ export default function Chat() {
                     </Col>
                 </Col>
             </ModalComponent>
-        );
-    };
+        ),
+        [logoutModal, closeChatWindow]
+    );
 
     return (
         <div className="chats-page">
             <Suspense fallback={<Loading />}>
-                <ModalLogout />
+                {ModalLogout}
                 <ToastContainer />
 
                 <div className="chats">

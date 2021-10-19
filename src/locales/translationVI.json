@@ -6,5 +6,6 @@
     "send": "Gửi",
     "list users": "Danh sách tài khoản",
     "success": "Thao tác thành công",
+    "write error": "Thao tác thất bại",
     "error": "Đọc dữ liệu thất bại"
 }

@@ -4,23 +4,19 @@ import './index.css';
 import App from './App';
 
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware, compose } from 'redux';
-import thunk from 'redux-thunk';
-import rootReducer from './reducers/index';
+import { PersistGate } from 'redux-persist/lib/integration/react';
+import { persistor, store } from './store';
+import Loading from './common/components/Loading';
 
-const store = createStore(
-    rootReducer,
-    compose(
-        applyMiddleware(thunk),
-        window.devToolsExtension ? window.devToolsExtension() : (f) => f
-    )
-);
 window.store = store;
 
 ReactDOM.render(
     <React.StrictMode>
         <Provider store={store}>
-            <App />
+            {/*2 props loading và persistor đều yêu cầu phải có */}
+            <PersistGate loading={<Loading />} persistor={persistor}>
+                <App />
+            </PersistGate>
         </Provider>
     </React.StrictMode>,
     document.getElementById('root')
