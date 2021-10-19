@@ -54,7 +54,7 @@ db
 |   |   |
 |   |   +--nickName
 |   |   |
-|   |   +--status //0: offline, 1: available, 2: unavailable
+|   |   +--status //0: offline, 1: available, userUid: unavailable
 |   |   |
 |   |   +--uid
 
