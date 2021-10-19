@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
     firebaseShallowKeys,
     getMessagePage
@@ -40,7 +40,7 @@ export const Container = ({ roomName }) => {
     const [listMessages, setListMessages] = useState([]);
     const notifyError = () => toast.error(i18n.t('error'));
 
-    const loadMoreData = async () => {
+    const loadMoreData = useCallback(async () => {
         setIsLoading(true);
         const { messages: newMessages, isMore } = await loadMessage(
             roomName,
@@ -50,7 +50,7 @@ export const Container = ({ roomName }) => {
         setIsMoreData(isMore);
         setNumberOfLoads((prev) => ++prev);
         setIsLoading(false);
-    };
+    }, [numberOfLoads, roomName]);
 
     useEffect(() => {
         const fetchData = async () => {
