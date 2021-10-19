@@ -1,6 +1,6 @@
 import { authConstants } from '../constants/auth.constants';
 
-export const GetAuthUser = (user = null) => {
+export const getAuthUser = (user = null) => {
     return (dispatch) => {
         dispatch({ type: authConstants.GET_AUTH_REQUEST });
         if (user) {
@@ -17,7 +17,7 @@ export const GetAuthUser = (user = null) => {
     };
 };
 
-export const ClearAuthUser = () => {
+export const clearAuthUser = () => {
     return (dispatch) => {
         dispatch({ type: authConstants.CLEAR_AUTH_REQUEST });
         dispatch({

@@ -1,4 +1,30 @@
 /* Global */
+:root {
+    --main-0: #f9fafa;
+    --main-1: #eef0f1;
+    --main-2: #d2d6db;
+    --main-3: #b5bdc4;
+    --main-4: #99a3ad;
+    --main-5: #7d8a97;
+    --main-6: #64707d;
+    --main-7: #4d5760;
+    --main-8: #363d44;
+    --main-9: #202428;
+
+    --main-a: rgba(8, 9, 10, 0.05);
+
+    --main-theme: #3b49df;
+    --main-theme-darker: #1827ce;
+    --main-theme-lighter: #8d95f2;
+
+    --theme-background: #eef0f1;
+    --font-color: #08090a;
+
+    --site-width: 1280px;
+
+    --header-height: 56px;
+    --header-bg: #fff;
+}
 
 * {
     font-family: Avenir, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
@@ -65,11 +91,11 @@
 /* Chats Page */
 
 .chats-page {
-    position: absolute;
+    /* position: absolute; */
     top: 0px;
     left: 0px;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
 }
 
 .nav-bar {
@@ -79,7 +105,7 @@
 }
 
 .logo-tab {
-    position: absolute;
+    /* position: absolute; */
     left: 22px;
     top: 12px;
     font-size: 32px;
@@ -88,7 +114,7 @@
 }
 
 .logout-tab {
-    position: absolute;
+    /* position: absolute; */
     top: 22px;
     right: 22px;
     color: white;
@@ -98,4 +124,20 @@
 ::-webkit-scrollbar {
     width: 0; /* Remove scrollbar space */
     background: transparent; /* Optional: just make scrollbar invisible */
+}
+
+.editable {
+    font-family: sans-serif;
+    width: 75%;
+    min-height: 100px;
+    border: 1px dashed #aaa;
+    padding: 5px;
+    resize: none;
+}
+
+.buttonSend {
+    width: 10%;
+    margin-left: 30px;
+    margin-bottom: auto;
+    margin-right: auto;
 }

@@ -1,0 +1,11 @@
+{
+    "welcome": "Welcome to Messaging Application!",
+    "sign in with facebook": "Sign In with Facebook",
+    "sign in with google": "Sign In with Google",
+    "login in as:": "Login in as:",
+    "send": "Send",
+    "list users": "List Users",
+    "success": "Action performed success",
+    "write error": "Action performed failed",
+    "error": "Read data failed"
+}
