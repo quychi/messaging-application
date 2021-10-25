@@ -3,6 +3,8 @@ Note: The latest source code is on branch "dev".
 
 Problem remaining: Can not handle case 2: one of two users close tab/browser. The `beforeunload` event include 3 actions: back page, refresh the page, close tab/browser, so I can not distinguish close tab/browser action with 2 action above.
 
+![Messaging Application](./public/chatApplication.gif)
+
 ## Introduction
 
 This is a Realtime Chat Application with Social Auth.
