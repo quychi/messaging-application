@@ -1,5 +1,5 @@
 # Messaging Application
-Note: The latest source code is on branch "dev".
+_**```Note: Please change to the "dev" branch. The latest source code is on "dev" branch.```**_
 
 Problem remaining: Can not handle case 2: one of two users close tab/browser. The `beforeunload` event include 3 actions: back page, refresh the page, close tab/browser, so I can not distinguish close tab/browser action with 2 action above.
 
@@ -24,12 +24,12 @@ Some dependencies: redux-persist, i18next, axios, eslint, prettier, react-toasti
 
 ## Installation instructions
 In the project directory, you can run:
-### `yarn`
-### `yarn start`
-### `yarn build`
+- yarn
+- yarn start
+- yarn build
 ...
-## Realtime Database
-This database design for 2 user chatting, but it can be scale in the future.
+## Realtime Database (Firebase)
+_This database design for 2 user chatting, but it can be scale in the future._
 ```
 db
 |
